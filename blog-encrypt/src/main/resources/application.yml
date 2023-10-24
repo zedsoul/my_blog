@@ -1,0 +1,19 @@
+server:
+  port: 8096
+
+spring:
+  application:
+    name: blog-encrypt
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: find
+          uri: lb://blog-nacos
+          predicates:
+            - Path=/service/**
