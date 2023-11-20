@@ -1,6 +1,8 @@
 package com.example.blogserver.Utils;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -112,7 +114,7 @@ public class FileUtil {
      * @return {@link String} 文件后缀
      */
     public static String getExtName(String fileName) {
-        if (StringUtils.isBlank(fileName)) {
+        if (StrUtil.isBlank(fileName)) {
             return "";
         }
         return fileName.substring(fileName.lastIndexOf("."));

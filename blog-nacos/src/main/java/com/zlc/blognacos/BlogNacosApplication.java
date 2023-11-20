@@ -12,7 +12,7 @@ public class BlogNacosApplication {
     public static void main(String[] args) {
 
         ConfigurableApplicationContext run = SpringApplication.run(BlogNacosApplication.class, args);
-        user bean = run.getBean(user.class);
+
 
     }
 
