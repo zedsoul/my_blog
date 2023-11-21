@@ -71,7 +71,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         if (loginRequired != null) {
             // 执行认证
 //            String token = request.getHeader("token");  // 从 http 请求头中取出 token
-            String token = request.getHeader("Authorization");
+            String token = request.getHeader("jj-auth");
             if (token == null) {
                 throw new BizException("无token，请重新登录");
             }

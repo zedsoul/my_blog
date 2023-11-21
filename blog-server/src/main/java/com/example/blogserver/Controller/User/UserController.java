@@ -1,4 +1,4 @@
-package com.example.blogserver.Controller;
+package com.example.blogserver.Controller.User;
 
 import com.example.blogserver.Vo.RegistedVo;
 import com.example.blogserver.annotation.IpRequired;
@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RefreshScope
 @RestController
@@ -27,11 +29,11 @@ public class UserController {
      */
     @PostMapping("/registed")
     @IpRequired
-    public R registed( RegistedVo register) {
+    public R registed( RegistedVo register, HttpServletRequest request) {
 
 
         try {
-            userService.registed(register);
+            userService.registed(register,  request);
         } catch (Exception e) {
             e.printStackTrace();
            return R.fail(100,e.getMessage());
@@ -46,15 +48,16 @@ public class UserController {
      * 用户登录
      */
     @PostMapping("/logined")
-    public R logined(RegistedVo loginer){
+    public R logined(RegistedVo loginer, HttpServletRequest request){
+        String Token="";
         try {
-            userService.logined(loginer);
+            Token = userService.logined(loginer, request);
         } catch (Exception e) {
             e.printStackTrace();
             return R.fail(100,e.getMessage());
         }
 
-        return  R.data(200,"登录成功！");
+        return  R.data(200,Token,"登录成功！");
     }
 
     /**

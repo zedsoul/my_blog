@@ -12,8 +12,10 @@ import java.util.Enumeration;
 @Component
 public class LoggingAspect {
 
-    @Pointcut("execution(* com.example.blogserver.Controller.*.*(..))")
-    public void logMethods() {}
+    @Pointcut("execution(* com.example.blogserver.Controller.*.*.*(..))")
+    public void logMethods() {
+
+    }
 
     @Before("logMethods()")
     public void logBeforeMethodCall(JoinPoint joinPoint) {
