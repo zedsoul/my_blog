@@ -7,7 +7,6 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-
 public class BlogEncryptApplication {
 
     public static void main(String[] args) {

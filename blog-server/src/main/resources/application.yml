@@ -1,6 +1,18 @@
 server:
   port: 9001
+logging:
+  level:
+    root: warn
+    pers.fjl.server: debug
+  file:
+    path: log/blog-dev.log
 spring:
+  mail:
+    host: smtp.qq.com #我用的是qq，用其他的也是一样
+    username: 1484908116@qq.com #这个是qq邮箱
+    password: lxffxabqpbsoffda #注意这个不是密码，是客户端授权码
+    default-encoding: UTF-8 #这个是字符集,咱们用utf-8就可以了
+
   application:
     name: blog-server
   cloud:
@@ -14,4 +26,11 @@ spring:
       discovery:
         locator:
           enabled: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/blog?useSSL=false&serverTimezone=UTC
+    username: root
+    password: root
 
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

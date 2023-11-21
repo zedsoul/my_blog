@@ -20,7 +20,7 @@ import java.util.Map;
 public class JWTFilter implements GatewayFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String token = exchange.getRequest().getHeaders().getFirst("token");
+        String token = exchange.getRequest().getHeaders().getFirst("z-Auth");
         try {
             JWTUtils.verify(token);
             // 如果验证通过，继续请求处理链
