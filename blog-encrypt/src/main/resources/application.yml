@@ -2,6 +2,7 @@ server:
   port: 8096
 
 spring:
+
   application:
     name: blog-encrypt
   cloud:
@@ -9,11 +10,24 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+      default-filters:
+          - DedupeResponseHeader=Vary Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
       discovery:
         locator:
           enabled: true
-      routes:
-        - id: find
-          uri: lb://blog-nacos
-          predicates:
-            - Path=/service/**
+
+
+
+
+#      routes:
+#        - id: find
+#          uri: lb://blog-server
+#          predicates:
+#            - Path=/service/**
+
