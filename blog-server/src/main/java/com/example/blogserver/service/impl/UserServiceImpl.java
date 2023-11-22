@@ -60,12 +60,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Boolean registed(RegistedVo register, HttpServletRequest request) {
         User user = BeanUtil.toBean(register, User.class);
         RegistedVo registed=new RegistedVo();
-        String realCode = (String) redisUtil.get(USER_CODE_KEY + register.getEmail());    // 先验证邮箱验证码是否正确
+        String realCode = (String) redisUtil.get(USER_CODE_KEY + register.getEmail());
+        System.out.println("用户--"+register.getEmail()+"--验证码为:"+realCode);// 先验证邮箱验证码是否正确
         LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(User::getEmail,register.getEmail());
       if( getOne(wrapper)!=null){
           throw new BizException("该账号已经注册过了");
-
       }else if (!realCode.equals(String.valueOf(register.getVertifyCode()))) {
           throw new BizException("您输入的邮箱验证码不正确");
         }
@@ -133,7 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void sendCode(String email) {
 // 校验账号是否合法
         if (!checkEmail(email)) {
-            throw new BizException("请输入正确邮箱");
+            throw new BizException("请输入正确邮箱或未填写邮箱！");
         }
         // 生成六位随机验证码发送
         String code = getRandomCode();

@@ -2,6 +2,9 @@ package com.example.blogserver.service;
 
 import com.example.blogserver.entity.BlogTag;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -20,5 +23,8 @@ public interface IBlogTagService extends IService<BlogTag> {
      * @return boolean
      * 根据博客id，增加对应的标签数量
      */
-    boolean addOneBlogTag(Long blogId, Integer[] value);
+    boolean addOneBlogTag(Long blogId, List<String> value);
+
+
+
 }

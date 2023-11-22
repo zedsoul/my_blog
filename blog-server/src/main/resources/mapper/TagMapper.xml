@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.blogserver.mapper.TagMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.blogserver.entity.Tag">
+        <id column="tag_id" property="tagId" />
+        <result column="tag_name" property="tagName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        tag_id, tag_name
+    </sql>
+    <select id="getBlogTagList" resultType="com.example.blogserver.entity.Tag">
+        SELECT t.tag_id, t.tag_name
+        FROM blog_tag bt, tag t
+        WHERE bt.blog_id = #{blogId} AND bt.tag_id = t.tag_id
+    </select>
+</mapper>

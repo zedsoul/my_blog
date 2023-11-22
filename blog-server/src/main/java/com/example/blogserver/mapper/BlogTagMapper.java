@@ -3,6 +3,7 @@ package com.example.blogserver.mapper;
 import com.example.blogserver.Vo.BlogVo;
 import com.example.blogserver.entity.BlogTag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -30,4 +31,7 @@ public interface BlogTagMapper extends BaseMapper<BlogTag> {
             "ORDER BY b.views DESC " +
             "LIMIT #{start},#{pageSize}")
     List<BlogVo> getByTagId(Integer start, Integer pageSize, Integer tagId);
+
+
+
 }
