@@ -5,6 +5,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.blogserver.Utils.MarkdownUtils;
@@ -12,6 +13,7 @@ import com.example.blogserver.Vo.BlogVo;
 import com.example.blogserver.dto.BlogBackInfoDTO;
 import com.example.blogserver.entity.*;
 import com.example.blogserver.exception.BizException;
+import com.example.blogserver.filter.SensitiveFilter;
 import com.example.blogserver.mapper.BlogMapper;
 import com.example.blogserver.mapper.BlogTagMapper;
 import com.example.blogserver.mapper.TagMapper;
@@ -19,10 +21,7 @@ import com.example.blogserver.mapper.TypeMapper;
 import com.example.blogserver.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import com.zlc.blogcommon.dto.BlogBackDTO;
-import com.zlc.blogcommon.dto.BlogRankDTO;
-import com.zlc.blogcommon.dto.BlogStatisticsDTO;
-import com.zlc.blogcommon.dto.ViewsDTO;
+import com.zlc.blogcommon.dto.*;
 import com.zlc.blogcommon.po.Blog;
 import com.zlc.blogcommon.po.User;
 import com.zlc.blogcommon.vo.TypeVO;
@@ -34,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +69,13 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
     BlogMapper blogMapper;
     @Autowired
     TypeMapper typeMapper;
+    @Autowired
+    ITagService tagService;
 
+
+    private Integer currentPage;
+    private Integer pageSize;
+    private Integer start;
     /**
      * @param blogVo
      *
@@ -78,7 +84,10 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
      */
     @Override
     public Long addOrUpdateBlog(BlogVo blogVo) {
+
         Blog blog = BeanUtil.toBeanIgnoreCase(blogVo, Blog.class, true);
+//        blog.setFirstPicture(isImagesTrue(blog.getFirstPicture()));
+        blog.setContent(SensitiveFilter.filter(blog.getContent()));
         //如果没有blogId就说明是添加blog,反之更新
         if(blogVo.getBlogId()==null) {
             //设置blogId
@@ -279,11 +288,138 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
 
     }
 
+
+    /**
+     * 获取网站信息
+     * @return blogInfo
+     */
     @Override
     public Page<BlogBackDTO> adminBlogPage(QueryPageBean queryPageBean) {
         Page<BlogBackDTO> blogBackDTOPage = new Page<>();
         blogBackDTOPage.setRecords(blogMapper.adminBlogPage(queryPageBean));
         blogBackDTOPage.setTotal(blogMapper.adminBlogPageCount(queryPageBean));
         return blogBackDTOPage;
+    }
+
+
+
+    @Override
+    public Page<BlogVo> findFavoritesPage(QueryPageBean queryPageBean, Long uid) {
+            Page<BlogVo> blogVOPage = new Page<BlogVo>();
+            blogVOPage.setRecords(blogMapper.findFavoritesPage(queryPageBean, uid));
+            return blogVOPage;
+        }
+
+    @Override
+    public BlogInfoDTO blogInfo() {
+        BlogInfoDTO blogInfoDTO = new BlogInfoDTO();
+        blogInfoDTO.setBlogCount(blogMapper.selectCount(null));
+        blogInfoDTO.setTagCount(tagMapper.selectCount(null));
+        blogInfoDTO.setTypeCount(typeMapper.selectCount(null));
+        return blogInfoDTO;
+    }
+
+    /**
+     * 管理员编辑文章
+     * @param  blogVO
+     * @param uid uid
+     */
+
+    @Override
+    public void adminSaveOrUpdateBlog(BlogVo blogVO, Long uid) {
+        // 保存文章分类
+        Type type = saveType(blogVO);
+        // 修改文章
+        Blog blog = BeanUtil.toBean(blogVO, Blog.class);
+        if (Objects.nonNull(type)) {
+            blog.setTypeId(type.getTypeId());
+        }
+        blog.setUid(uid);
+        blog.setContent(SensitiveFilter.filter(blog.getContent()));
+       saveOrUpdate(blog);
+        // 保存文章标签
+        saveBlogTag(blogVO, blog.getBlogId());
+    }
+
+    /**
+     * 保存文章分类
+     *
+     * @param
+     * @return {@link Type} 文章分类
+     */
+    private Type saveType(BlogVo blogVO) {
+        // 判断分类是否存在
+        Type type = typeMapper.selectOne(new LambdaQueryWrapper<Type>()
+                .eq(Type::getTypeName, blogVO.getTypeName()));
+        if (Objects.isNull(type)) {
+            type = type.builder()
+                    .typeName(blogVO.getTypeName())
+                    .build();
+            typeService.save(type);
+        }
+        return type;
+    }
+
+    /**
+     * 保存文章标签
+     *
+     * @param blogVO 文章信息
+     */
+    private void saveBlogTag(BlogVo blogVO, Long blogId) {
+        // 编辑文章则先删除文章所有标签
+        if (Objects.nonNull(blogVO.getBlogId())) {
+            blogTagService.remove(new LambdaQueryWrapper<BlogTag>()
+                    .eq(BlogTag::getBlogId, blogVO.getBlogId()));
+        }
+        // 添加文章标签
+        List<String> tagNameList = blogVO.getTags();
+        if (CollectionUtils.isNotEmpty(tagNameList)) {
+            // 查询已存在的标签
+            List<Tag> existTagList = tagService.list(new LambdaQueryWrapper<Tag>()
+                    .in(Tag::getTagName, tagNameList));
+            List<String> existTagNameList = existTagList.stream()
+                    .map(Tag::getTagName)
+                    .collect(Collectors.toList());
+            List<Integer> existTagIdList = existTagList.stream()
+                    .map(Tag::getTagId)
+                    .collect(Collectors.toList());
+            // 对比新增不存在的标签（去掉存在的就是不存在的，即我们要新增的）
+            tagNameList.removeAll(existTagNameList);
+            if (CollectionUtils.isNotEmpty(tagNameList)) {
+                List<Tag> tagList = tagNameList.stream().map(item -> Tag.builder()
+                        .tagName(item)
+                        .build())
+                        .collect(Collectors.toList());
+                tagService.saveBatch(tagList);
+                List<Integer> tagIdList = tagList.stream()
+                        .map(Tag::getTagId)
+                        .collect(Collectors.toList());
+                existTagIdList.addAll(tagIdList);
+            }
+            // 提取标签id绑定文章
+            List<BlogTag> blogTagList = existTagIdList.stream().map(item -> BlogTag.builder()
+                    .blogId(blogId)
+                    .tagId(item)
+                    .build())
+                    .collect(Collectors.toList());
+            blogTagService.saveBatch(blogTagList);
+        }
+    }
+
+    @Override
+    public Page<BlogVo> findPage(QueryPageBean queryPageBean, Long uid) {
+        currentPage = queryPageBean.getCurrentPage();
+        pageSize = queryPageBean.getPageSize();
+        start = (currentPage - 1) * pageSize;
+
+        //设置分页条件
+        Page<BlogVo> page = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
+        QueryWrapper<Blog> wrapper = new QueryWrapper<>();
+        wrapper.eq("uid", uid);
+        //执行全部查询
+        page.setRecords(blogMapper.getAllBlogs(uid, start, pageSize));
+        //查询总记录数
+        page.setTotal(blogMapper.selectCount(wrapper));
+        return page;
     }
 }

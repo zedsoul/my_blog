@@ -1,5 +1,6 @@
 package com.zlc.blogcommon.vo;
 
+
 import com.zlc.blogcommon.po.Type;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

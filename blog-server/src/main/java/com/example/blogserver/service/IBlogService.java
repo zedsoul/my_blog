@@ -9,6 +9,7 @@ import com.example.blogserver.dto.BlogBackInfoDTO;
 import com.example.blogserver.entity.QueryPageBean;
 
 import com.zlc.blogcommon.dto.BlogBackDTO;
+import com.zlc.blogcommon.dto.BlogInfoDTO;
 import com.zlc.blogcommon.po.Blog;
 
 
@@ -94,4 +95,35 @@ public interface IBlogService extends IService<Blog> {
      * @return page
      */
     Page<BlogBackDTO> adminBlogPage(QueryPageBean queryPageBean);
+
+
+
+    /**
+     * 收藏夹的分页数据(按时间降序)
+     * @param queryPageBean
+     * @return Page<BlogVO>
+     */
+
+    Page<BlogVo> findFavoritesPage(QueryPageBean queryPageBean, Long uid);
+
+
+    /**
+     * 获取网站信息
+     * @return blogInfo
+     */
+    BlogInfoDTO blogInfo();
+
+    /**
+     * 管理员编辑文章
+     * @param  blogVO
+     * @param uid uid
+     */
+    void adminSaveOrUpdateBlog(BlogVo blogVO, Long uid);
+
+    /**
+     * 博客管理的分页数据
+     * @param queryPageBean
+     * @return Page<BlogVO>
+     */
+    Page<BlogVo> findPage(QueryPageBean queryPageBean, Long uid);
 }

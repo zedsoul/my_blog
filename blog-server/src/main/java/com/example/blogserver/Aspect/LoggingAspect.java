@@ -1,4 +1,4 @@
-package com.example.blogserver.Config;
+package com.example.blogserver.Aspect;
 
 import com.example.blogserver.Utils.IpUtils;
 import org.aspectj.lang.JoinPoint;

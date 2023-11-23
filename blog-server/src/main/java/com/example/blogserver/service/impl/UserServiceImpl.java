@@ -33,8 +33,7 @@ import static com.example.blogserver.Utils.CommonUtils.checkEmail;
 import static com.example.blogserver.Utils.CommonUtils.getRandomCode;
 import static com.example.blogserver.interceptors.AuthenticationInterceptor.redisUtil;
 import static com.zlc.blogcommon.constant.RabbitMQConst.EMAIL_EXCHANGE;
-import static com.zlc.blogcommon.constant.RedisConst.CODE_EXPIRE_TIME;
-import static com.zlc.blogcommon.constant.RedisConst.USER_CODE_KEY;
+import static com.zlc.blogcommon.constant.RedisConst.*;
 
 /**
  * <p>
@@ -168,7 +167,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(!HashUtil.verifyPassword(resetPassword.getPassword(),userDB.getPassword())){
             throw new BizException("输入密码错误！");
         }
+
         String realCode = (String) redisUtil.get(USER_CODE_KEY + resetPassword.getEmail());    // 先验证邮箱验证码是否正确
+        if (resetPassword.getVertifyCode()==null) {
+            throw new BizException("您没有输入邮箱验证码！");
+        }
         if (!realCode.equals(String.valueOf(resetPassword.getVertifyCode()))) {
             throw new BizException("您输入的邮箱验证码不正确");
         }
@@ -185,7 +188,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         payload.put("id", String.valueOf(user.getUid()));
         payload.put("lastIp", user.getLastIp());
         payload.put("username", user.getUsername());
-        payload.put("email", user.getUsername());
+        payload.put("email", user.getEmail());
+        redisUtil.set(TOKEN_ALLOW_LIST + user.getEmail(), JWTUtils.getToken(payload), CODE_EXPIRE_TIME);
         return JWTUtils.getToken(payload);
     }
 }

@@ -76,13 +76,15 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 throw new BizException("无token，请重新登录");
             }
             String userId;
+            String email;
             try {
                 DecodedJWT verify = getTokenInfo(token);
                 userId = verify.getClaim("id").asString();
+                email = verify.getClaim("email").asString();
             } catch (JWTDecodeException e) {
                 throw new BizException("token无效，请重新登录");
             }
-            if (Objects.isNull(redisUtil.get(TOKEN_ALLOW_LIST + userId)))  {    // token已经失效
+            if (Objects.isNull(redisUtil.get(TOKEN_ALLOW_LIST + email)))  {    // token已经失效
                 throw new BizException(TOKEN_EXPIRED.getDesc());
             }
             User user = userService.findById(Long.parseLong(userId));

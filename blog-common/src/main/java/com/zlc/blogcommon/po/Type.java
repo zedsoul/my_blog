@@ -10,11 +10,11 @@ import java.io.Serializable;
 
 /**
  * <p>
- *
+ * 类型
  * </p>
  *
- * @author fangjiale
- * @since 2021-01-27
+ * @author zlc
+ * @since 2023-11-22
  */
 @Data
 @Builder
@@ -22,7 +22,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @ApiModel(value = "分类实体", description = "分类实体")
 @EqualsAndHashCode(callSuper = false)
-public class Type extends Model<Type> {
+public class Type extends Model<Type> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

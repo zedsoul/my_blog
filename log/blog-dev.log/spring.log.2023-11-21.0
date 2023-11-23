@@ -1825,7 +1825,7 @@ javax.management.InstanceNotFoundException: org.springframework.boot:type=Admin,
 2023-11-21 16:35:33.181 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'projectingArgumentResolverBeanPostProcessor'
 2023-11-21 16:35:33.183 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'org.springframework.transaction.config.internalTransactionAdvisor'
 2023-11-21 16:35:33.183 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration'
-2023-11-21 16:35:33.197 DEBUG 12420 --- [main] .s.a.a.a.ReflectiveAspectJAdvisorFactory : Found AspectJ method: public void com.example.blogserver.Config.LoggingAspect.logBeforeMethodCall(org.aspectj.lang.JoinPoint)
+2023-11-21 16:35:33.197 DEBUG 12420 --- [main] .s.a.a.a.ReflectiveAspectJAdvisorFactory : Found AspectJ method: public void com.example.blogserver.Aspect.LoggingAspect.logBeforeMethodCall(org.aspectj.lang.JoinPoint)
 2023-11-21 16:35:33.351 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'transactionAttributeSource'
 2023-11-21 16:35:33.362 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'transactionInterceptor'
 2023-11-21 16:35:33.363 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Autowiring by type from bean name 'transactionInterceptor' via factory method to bean named 'transactionAttributeSource'
@@ -8215,7 +8215,7 @@ javax.management.InstanceNotFoundException: org.springframework.boot:type=Admin,
 2023-11-21 16:35:33.181 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'projectingArgumentResolverBeanPostProcessor'
 2023-11-21 16:35:33.183 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'org.springframework.transaction.config.internalTransactionAdvisor'
 2023-11-21 16:35:33.183 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration'
-2023-11-21 16:35:33.197 DEBUG 12420 --- [main] .s.a.a.a.ReflectiveAspectJAdvisorFactory : Found AspectJ method: public void com.example.blogserver.Config.LoggingAspect.logBeforeMethodCall(org.aspectj.lang.JoinPoint)
+2023-11-21 16:35:33.197 DEBUG 12420 --- [main] .s.a.a.a.ReflectiveAspectJAdvisorFactory : Found AspectJ method: public void com.example.blogserver.Aspect.LoggingAspect.logBeforeMethodCall(org.aspectj.lang.JoinPoint)
 2023-11-21 16:35:33.351 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'transactionAttributeSource'
 2023-11-21 16:35:33.362 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Creating shared instance of singleton bean 'transactionInterceptor'
 2023-11-21 16:35:33.363 DEBUG 12420 --- [main] o.s.b.f.s.DefaultListableBeanFactory     : Autowiring by type from bean name 'transactionInterceptor' via factory method to bean named 'transactionAttributeSource'
