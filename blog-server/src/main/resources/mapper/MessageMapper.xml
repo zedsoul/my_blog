@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.blogserver.mapper.MessageMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.blogserver.entity.Message">
+        <id column="mid" property="mid" />
+        <result column="time" property="time" />
+        <result column="message_content" property="messageContent" />
+        <result column="create_time" property="createTime" />
+        <result column="avatar" property="avatar" />
+        <result column="nickname" property="nickname" />
+        <result column="ip" property="ip" />
+        <result column="ip_source" property="ipSource" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        mid, time, message_content, create_time, avatar, nickname, ip, ip_source
+    </sql>
+
+</mapper>

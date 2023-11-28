@@ -98,5 +98,4 @@ public class Blog implements Serializable {
      */
     private Boolean copyright;
 
-
 }

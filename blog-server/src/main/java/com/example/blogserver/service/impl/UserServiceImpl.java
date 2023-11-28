@@ -33,8 +33,7 @@ import static com.example.blogserver.Utils.CommonUtils.checkEmail;
 import static com.example.blogserver.Utils.CommonUtils.getRandomCode;
 import static com.example.blogserver.interceptors.AuthenticationInterceptor.redisUtil;
 import static com.zlc.blogcommon.constant.RabbitMQConst.EMAIL_EXCHANGE;
-import static com.zlc.blogcommon.constant.RedisConst.CODE_EXPIRE_TIME;
-import static com.zlc.blogcommon.constant.RedisConst.USER_CODE_KEY;
+import static com.zlc.blogcommon.constant.RedisConst.*;
 
 /**
  * <p>
@@ -60,17 +59,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Boolean registed(RegistedVo register, HttpServletRequest request) {
         User user = BeanUtil.toBean(register, User.class);
         RegistedVo registed=new RegistedVo();
-        String realCode = (String) redisUtil.get(USER_CODE_KEY + register.getEmail());    // 先验证邮箱验证码是否正确
+        String realCode = (String) redisUtil.get(USER_CODE_KEY + register.getEmail());
+        System.out.println("用户--"+register.getEmail()+"--验证码为:"+realCode);// 先验证邮箱验证码是否正确
         LambdaQueryWrapper<User> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(User::getEmail,register.getEmail());
       if( getOne(wrapper)!=null){
           throw new BizException("该账号已经注册过了");
-
       }else if (!realCode.equals(String.valueOf(register.getVertifyCode()))) {
           throw new BizException("您输入的邮箱验证码不正确");
         }
       else{
-        user.setPassword( HashUtil.hashPassword(user.getPassword()));
+        user.setPassword( HashUtil.hashPassword(register.getPassword()));
         user.setLastIp(request.getAttribute("host").toString());
 
           if(save(user)){
@@ -92,7 +91,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(userDB==null){
             throw new BizException("该用户不存在，请重新确认");
         }
-        if(HashUtil.verifyPassword(register.getPassword(),userDB.getPassword())){
+        boolean b = HashUtil.verifyPassword(register.getPassword(), userDB.getPassword());
+        if(!HashUtil.verifyPassword(register.getPassword(),userDB.getPassword())){
             throw new BizException("输入密码错误！");
         }
         userDB.setLastIp(request.getRemoteHost());
@@ -133,7 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void sendCode(String email) {
 // 校验账号是否合法
         if (!checkEmail(email)) {
-            throw new BizException("请输入正确邮箱");
+            throw new BizException("请输入正确邮箱或未填写邮箱！");
         }
         // 生成六位随机验证码发送
         String code = getRandomCode();
@@ -165,15 +165,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BizException("该用户不存在，请重新确认");
         }
 
-        if(!HashUtil.verifyPassword(resetPassword.getPassword(),userDB.getPassword())){
-            throw new BizException("输入密码错误！");
+
+
+        String realCode = (String) redisUtil.get(USER_CODE_KEY + resetPassword.getEmail());
+        if(realCode==null){
+            throw new BizException("验证码已经过期！");
+        }// 先验证邮箱验证码是否正确
+        if (resetPassword.getVertifyCode()==null) {
+            throw new BizException("您没有输入邮箱验证码！");
         }
-        String realCode = (String) redisUtil.get(USER_CODE_KEY + resetPassword.getEmail());    // 先验证邮箱验证码是否正确
         if (!realCode.equals(String.valueOf(resetPassword.getVertifyCode()))) {
             throw new BizException("您输入的邮箱验证码不正确");
         }
 
-        userDB.setPassword(HashUtil.hashPassword(userDB.getPassword()));
+        userDB.setPassword(HashUtil.hashPassword(resetPassword.getPassword()));
         userDB.setUpdateTime(LocalDateTime.now());
        updateById(userDB);
     }
@@ -185,7 +190,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         payload.put("id", String.valueOf(user.getUid()));
         payload.put("lastIp", user.getLastIp());
         payload.put("username", user.getUsername());
-        payload.put("email", user.getUsername());
+        payload.put("email", user.getEmail());
+        redisUtil.set(TOKEN_ALLOW_LIST + user.getEmail(), JWTUtils.getToken(payload), CODE_EXPIRE_TIME);
         return JWTUtils.getToken(payload);
     }
 }

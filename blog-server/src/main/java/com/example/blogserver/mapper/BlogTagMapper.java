@@ -1,9 +1,10 @@
 package com.example.blogserver.mapper;
 
+import com.example.blogserver.Vo.BlogVo;
 import com.example.blogserver.entity.BlogTag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import com.example.blogserver.Vo.BlogVo;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @since 2023-11-21
  */
 public interface BlogTagMapper extends BaseMapper<BlogTag> {
+
     /**
      * 根据标签类型获取博客列表
      * @param start
@@ -29,4 +31,7 @@ public interface BlogTagMapper extends BaseMapper<BlogTag> {
             "ORDER BY b.views DESC " +
             "LIMIT #{start},#{pageSize}")
     List<BlogVo> getByTagId(Integer start, Integer pageSize, Integer tagId);
+
+
+
 }
