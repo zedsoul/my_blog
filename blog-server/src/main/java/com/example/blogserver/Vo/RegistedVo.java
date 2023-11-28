@@ -19,5 +19,5 @@ public class RegistedVo {
     String  email;
     String  username;
     String  password;
-    Integer vertifyCode;
+    String vertifyCode;
 }

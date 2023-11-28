@@ -15,10 +15,10 @@ public class GatewayConfig {
         return builder.routes()
                 .route(r -> r.path("/service/**")
                         //添加jwt过滤器
-                       .filters(f -> f.filter(new JWTFilter()))
+//                       .filters(f -> f.filter(new JWTFilter()))
                         .uri("lb://blog-server")
                 )
-                .route(r -> r.path("/user/**")
+                .route(r -> r.path("/**")
 
                         .uri("lb://blog-server")
                 )
