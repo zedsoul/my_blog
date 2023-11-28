@@ -21,6 +21,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -70,10 +72,18 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         // 有 @LoginRequired 注解，需要认证
         if (loginRequired != null) {
             // 执行认证
-//            String token = request.getHeader("token");  // 从 http 请求头中取出 token
             String token = request.getHeader("jj-auth");
             if (token == null) {
-                throw new BizException("无token，请重新登录");
+                HttpServletResponse httpResponse = (HttpServletResponse) response;
+                httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                // 返回JSON格式的错误信息
+                httpResponse.setContentType("application/json");
+                httpResponse.setCharacterEncoding("UTF-8");
+                PrintWriter writer = httpResponse.getWriter();
+                    writer.write("{\"code\": 401, \"error\": \"用户不存在，请重新登录\"}");
+                return  false;
+
+
             }
             String userId;
             String email;
@@ -89,6 +99,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             }
             User user = userService.findById(Long.parseLong(userId));
             if (user == null) {
+
                 throw new BizException("用户不存在，请重新登录");
             }
             // 验证 token
@@ -104,3 +115,4 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     }
 
 }
+

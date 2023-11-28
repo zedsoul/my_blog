@@ -43,6 +43,14 @@ public class BlogController {
 
 
 
+    @OptLog(optType = OptTypeConst.Get)
+    @LoginRequired
+    @ApiOperation(value = "展示博客信息按照浏览数或点赞数排列", notes = "返回博客信息")
+    @GetMapping("/displayblog")
+    public R displayblog(QueryPageBean queryPageBean) {
+        return R.data( blogService.displayblog(queryPageBean),"获取分页数据成功");
+    }
+
     /**
      * @param blogVo
      * @return {@link R}

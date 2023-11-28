@@ -69,7 +69,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
           throw new BizException("您输入的邮箱验证码不正确");
         }
       else{
-        user.setPassword( HashUtil.hashPassword(user.getPassword()));
+        user.setPassword( HashUtil.hashPassword(register.getPassword()));
         user.setLastIp(request.getAttribute("host").toString());
 
           if(save(user)){
@@ -91,7 +91,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(userDB==null){
             throw new BizException("该用户不存在，请重新确认");
         }
-        if(HashUtil.verifyPassword(register.getPassword(),userDB.getPassword())){
+        boolean b = HashUtil.verifyPassword(register.getPassword(), userDB.getPassword());
+        if(!HashUtil.verifyPassword(register.getPassword(),userDB.getPassword())){
             throw new BizException("输入密码错误！");
         }
         userDB.setLastIp(request.getRemoteHost());
@@ -164,11 +165,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BizException("该用户不存在，请重新确认");
         }
 
-        if(!HashUtil.verifyPassword(resetPassword.getPassword(),userDB.getPassword())){
-            throw new BizException("输入密码错误！");
-        }
 
-        String realCode = (String) redisUtil.get(USER_CODE_KEY + resetPassword.getEmail());    // 先验证邮箱验证码是否正确
+
+        String realCode = (String) redisUtil.get(USER_CODE_KEY + resetPassword.getEmail());
+        if(realCode==null){
+            throw new BizException("验证码已经过期！");
+        }// 先验证邮箱验证码是否正确
         if (resetPassword.getVertifyCode()==null) {
             throw new BizException("您没有输入邮箱验证码！");
         }
@@ -176,7 +178,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BizException("您输入的邮箱验证码不正确");
         }
 
-        userDB.setPassword(HashUtil.hashPassword(userDB.getPassword()));
+        userDB.setPassword(HashUtil.hashPassword(resetPassword.getPassword()));
         userDB.setUpdateTime(LocalDateTime.now());
        updateById(userDB);
     }

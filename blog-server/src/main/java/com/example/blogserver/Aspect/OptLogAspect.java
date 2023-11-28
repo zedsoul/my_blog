@@ -23,6 +23,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static com.example.blogserver.Utils.JWTUtils.getTokenInfo;
@@ -110,6 +111,7 @@ public class OptLogAspect {
         operationLog.setIpSource(IpUtils.getIpSource(ipAddress));
         // 请求URL
         operationLog.setOptUrl(request.getRequestURI());
+        operationLog.setCreateTime(LocalDateTime.now());
         operationLogDao.save(operationLog);
     }
 

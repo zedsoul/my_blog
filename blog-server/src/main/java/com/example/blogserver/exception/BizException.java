@@ -2,6 +2,10 @@ package com.example.blogserver.exception;
 
 import com.zlc.blogcommon.enums.StatusCodeEnum;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletResponse;
 
 import static com.zlc.blogcommon.enums.StatusCodeEnum.FAIL;
 
@@ -25,6 +29,7 @@ public class BizException extends RuntimeException {
 
     public BizException(String message) {
         this.message = message;
+
     }
 
     public BizException(String message, StatusCodeEnum statusCodeEnum) {

@@ -7,7 +7,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 public class HashUtil {
-    private static final int ITERATIONS = 10000; // 迭代次数
+    private static final int ITERATIONS = 100; // 迭代次数
     private static final int SALT_LENGTH = 16; // 盐值长度
 
     public static String hashPassword(String password) {
@@ -20,7 +20,7 @@ public class HashUtil {
             digest.reset();
             digest.update(salt);
 
-            byte[] hashedBytes = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+            byte[] hashedBytes = digest.digest(password.getBytes());
 
             for (int i = 0; i < ITERATIONS; i++) {
                 digest.reset();
@@ -48,7 +48,7 @@ public class HashUtil {
             digest.reset();
             digest.update(salt);
 
-            byte[] hashedInput = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+            byte[] hashedInput = digest.digest(password.getBytes());
 
             for (int i = 0; i < ITERATIONS; i++) {
                 digest.reset();
@@ -58,20 +58,22 @@ public class HashUtil {
             byte[] storedPassword = new byte[decodedBytes.length - SALT_LENGTH];
             System.arraycopy(decodedBytes, SALT_LENGTH, storedPassword, 0, storedPassword.length);
 
-            // 比较两个哈希后的密码是否相同
-            if (storedPassword.length != hashedInput.length) {
-                return false;
-            }
-
-            for (int i = 0; i < storedPassword.length; i++) {
-                if (storedPassword[i] != hashedInput[i]) {
-                    return false;
-                }
-            }
-            return true;
+            return MessageDigest.isEqual(storedPassword, hashedInput);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static void main(String[] args) {
+        String originalPassword = "111";
+
+        // 加密密码
+        String hashedPassword = hashPassword(originalPassword);
+        System.out.println("Hashed Password: " + hashedPassword);
+
+        // 验证密码
+        boolean passwordMatches = verifyPassword(originalPassword, hashedPassword);
+        System.out.println("Password Matches: " + passwordMatches);
     }
 }

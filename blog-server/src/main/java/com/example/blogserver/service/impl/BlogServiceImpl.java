@@ -2,20 +2,22 @@ package com.example.blogserver.service.impl;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.ListUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.blogserver.Utils.MarkdownUtils;
 import com.example.blogserver.Vo.BlogVo;
+import com.example.blogserver.Vo.displayBlogVo;
 import com.example.blogserver.dto.BlogBackInfoDTO;
 import com.example.blogserver.entity.*;
 import com.example.blogserver.exception.BizException;
 import com.example.blogserver.filter.SensitiveFilter;
 import com.example.blogserver.mapper.BlogMapper;
-import com.example.blogserver.mapper.BlogTagMapper;
 import com.example.blogserver.mapper.TagMapper;
 import com.example.blogserver.mapper.TypeMapper;
 import com.example.blogserver.service.*;
@@ -25,7 +27,6 @@ import com.zlc.blogcommon.dto.*;
 import com.zlc.blogcommon.po.Blog;
 import com.zlc.blogcommon.po.User;
 import com.zlc.blogcommon.vo.TypeVO;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -422,4 +423,62 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
         page.setTotal(blogMapper.selectCount(wrapper));
         return page;
     }
+
+//    @Override
+//    public List<displayBlogVo> displayblog() {
+//        List<Blog> blogList = list();
+//        List<displayBlogVo> displayBlogVos = BeanUtil.copyToList(blogList, displayBlogVo.class);
+//        displayBlogVos.stream().forEach(blogVo-> {
+//                    blogVo.setTags(tagMapper.getBlogTagList(blogVo.getBlogId()).stream().map(Tag::getTagName).collect(Collectors.toList()));
+//                    Type type = typeMapper.selectById(blogVo.getBlogId());
+//                    if (type != null) {
+//                        blogVo.setTypeName(type.getTypeName());
+//                    }
+//                    User user = userService.getById(blogVo.getUid());
+//                    if (user != null) {
+//                        blogVo.setNickname(user.getNickname());
+//                        blogVo.setAvatar(user.getAvatar());
+//                    }
+//                }
+//
+//        );
+//        return displayBlogVos;
+//    }
+
+    public IPage<displayBlogVo> displayblog(QueryPageBean queryPageBean) {
+        currentPage = queryPageBean.getCurrentPage();
+        pageSize = queryPageBean.getPageSize();
+        start = (currentPage - 1) * pageSize;
+
+        //设置分页条件
+        Page<Blog> page = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
+        page.addOrder(OrderItem.desc("thumbs"));
+        // 使用 MyBatis-Plus 提供的分页查询方法进行查询
+        IPage<Blog> blogPage = blogMapper.selectPage(page, null) ;//假设你的 BlogMapper 注入为 blogMapper
+
+        // 将查询结果转换为 DisplayBlogVo 对象列表
+        List<displayBlogVo> displayBlogVos = blogPage.getRecords().stream().map(blog -> {
+            displayBlogVo blogVo = BeanUtil.copyProperties(blog, displayBlogVo.class);
+            // 设置其他属性
+            blogVo.setTags(tagMapper.getBlogTagList(blog.getBlogId()).stream().map(Tag::getTagName).collect(Collectors.toList()));
+            Type type = typeMapper.selectById(blog.getTypeId());
+            if (type != null) {
+                blogVo.setTypeName(type.getTypeName());
+            }
+            User user = userService.getById(blog.getUid());
+            if (user != null) {
+                blogVo.setNickname(user.getNickname());
+                blogVo.setAvatar(user.getAvatar());
+            }
+            return blogVo;
+        }).collect(Collectors.toList());
+
+        // 创建一个新的 IPage，将 DisplayBlogVo 列表设置到其中
+        IPage<displayBlogVo> resultPage = new Page<>(blogPage.getCurrent(), blogPage.getSize(), blogPage.getTotal());
+        resultPage.setRecords(displayBlogVos);
+
+        return resultPage;
+    }
+
+
 }

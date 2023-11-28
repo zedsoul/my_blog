@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.blogserver.Vo.BlogVo;
+import com.example.blogserver.Vo.displayBlogVo;
 import com.example.blogserver.dto.BlogBackInfoDTO;
 import com.example.blogserver.entity.QueryPageBean;
 
@@ -126,4 +127,8 @@ public interface IBlogService extends IService<Blog> {
      * @return Page<BlogVO>
      */
     Page<BlogVo> findPage(QueryPageBean queryPageBean, Long uid);
+
+
+
+    IPage<displayBlogVo> displayblog(QueryPageBean queryPageBean);
 }
