@@ -74,6 +74,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
     ITagService tagService;
 
 
+
     private Integer currentPage;
     private Integer pageSize;
     private Integer start;
@@ -470,6 +471,9 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
                 blogVo.setNickname(user.getNickname());
                 blogVo.setAvatar(user.getAvatar());
             }
+            //设置博客点赞数量
+            int count = favoritesService.count(new LambdaQueryWrapper<Favorites>().eq(Favorites::getBlogId, blog.getBlogId()));
+            blogVo.setThumbsCounts(count);
             return blogVo;
         }).collect(Collectors.toList());
 
