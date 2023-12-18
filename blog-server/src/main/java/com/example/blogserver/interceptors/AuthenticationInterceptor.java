@@ -1,5 +1,6 @@
 package com.example.blogserver.interceptors;
 
+import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
@@ -74,14 +75,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             // 执行认证
             String token = request.getHeader("jj-auth");
             if (token == null) {
-                HttpServletResponse httpResponse = (HttpServletResponse) response;
-                httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                // 返回JSON格式的错误信息
-                httpResponse.setContentType("application/json");
-                httpResponse.setCharacterEncoding("UTF-8");
-                PrintWriter writer = httpResponse.getWriter();
-                    writer.write("{\"code\": 401, \"error\": \"用户不存在，请重新登录\"}");
-                return  false;
+             return    responsed("401", "用户不存在，请重新登录", response);
 
 
             }
@@ -92,21 +86,21 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 userId = verify.getClaim("id").asString();
                 email = verify.getClaim("email").asString();
             } catch (JWTDecodeException e) {
-                throw new BizException("token无效，请重新登录");
+                return   responsed("401",   "token无效，请重新登录", response);
             }
-            if (Objects.isNull(redisUtil.get(TOKEN_ALLOW_LIST + email)))  {    // token已经失效
-                throw new BizException(TOKEN_EXPIRED.getDesc());
+            if (Objects.isNull(redisUtil.get(TOKEN_ALLOW_LIST + email))) {    // token已经失效
+                return   responsed("401", "token已经失效", response);
             }
             User user = userService.findById(Long.parseLong(userId));
             if (user == null) {
 
-                throw new BizException("用户不存在，请重新登录");
+                return    responsed("401", "用户不存在，请重新登录", response);
             }
             // 验证 token
             try {
                 JWTUtils.verify(token);
             } catch (JWTVerificationException e) {
-                throw new BizException("token无效，请重新登录");
+                return    responsed("401", "token无效，请重新登录", response);
             }
             request.setAttribute("currentUser", user);
             return true;
@@ -114,5 +108,29 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    static boolean responsed(String code, String msg, HttpServletResponse response) {
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        // 返回JSON格式的错误信息
+        httpResponse.setContentType("application/json");
+        httpResponse.setCharacterEncoding("UTF-8");
+
+        PrintWriter writer;
+        try {
+            writer = httpResponse.getWriter();
+            JSONObject errorResponse = new JSONObject();
+            errorResponse.put("code", code);
+            errorResponse.put("error", msg);
+            writer.write(errorResponse.toJSONString());
+        } catch (IOException e) {
+            // 处理IO异常
+            e.printStackTrace();
+            // 可能需要返回特殊的错误信息，比如：
+            // writer.write("{\"code\": -1, \"error\": \"Internal Server Error\"}");
+            return false;
+        }
+        return false;
+    }
 }
 

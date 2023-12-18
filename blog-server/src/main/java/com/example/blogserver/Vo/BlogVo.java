@@ -80,7 +80,7 @@ public class BlogVo {
     /**
      * 版权状态
      */
-    private Boolean copyright;
+    private String copyright;
 
 
     private String typeName;    // 分类名称

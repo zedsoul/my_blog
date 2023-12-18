@@ -1,8 +1,10 @@
 package com.example.blogserver.Controller.User;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.example.blogserver.Utils.JWTUtils;
 import com.example.blogserver.Utils.WebUtil;
 import com.example.blogserver.Vo.RegistedVo;
+import com.example.blogserver.Vo.UserVo;
 import com.example.blogserver.annotation.IpRequired;
 import com.example.blogserver.annotation.LoginRequired;
 import com.example.blogserver.annotation.OptLog;
@@ -103,7 +105,8 @@ public class UserController {
     public R userInfo(){
         String uid= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
         User user = userService.getById(uid);
-        return R.data(200,user,"用户数据获取成功！");
+        UserVo userVo = BeanUtil.copyProperties(user, UserVo.class);
+        return R.data(200,userVo,"用户数据获取成功！");
 
     }
 }

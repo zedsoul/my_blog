@@ -96,6 +96,6 @@ public class Blog implements Serializable {
     /**
      * 版权状态
      */
-    private Boolean copyright;
+    private String copyright;
 
 }
