@@ -3,6 +3,7 @@ package com.example.blogserver.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.blogserver.Vo.BlogVo;
+import com.example.blogserver.Vo.FavoriteVo;
 import com.example.blogserver.Vo.FindPageVo;
 import com.example.blogserver.entity.QueryPageBean;
 import com.zlc.blogcommon.dto.BlogBackDTO;
@@ -89,7 +90,7 @@ public interface BlogMapper extends BaseMapper<Blog> {
      * @param uid 用户id
      * @return
      */
-    List<BlogVo> findFavoritesPage(@Param("queryPageBean") QueryPageBean queryPageBean, @Param("uid") Long uid);
+    List<FavoriteVo> findFavoritesPage(@Param("queryPageBean") QueryPageBean queryPageBean, @Param("uid") Long uid);
 
     /**
      * 获取管理后台对应博文数量

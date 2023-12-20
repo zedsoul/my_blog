@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.blogserver.Utils.MarkdownUtils;
 import com.example.blogserver.Vo.BlogVo;
+import com.example.blogserver.Vo.FavoriteVo;
 import com.example.blogserver.Vo.FindPageVo;
 import com.example.blogserver.Vo.displayBlogVo;
 import com.example.blogserver.dto.BlogBackInfoDTO;
@@ -19,6 +20,7 @@ import com.example.blogserver.entity.*;
 import com.example.blogserver.exception.BizException;
 import com.example.blogserver.filter.SensitiveFilter;
 import com.example.blogserver.mapper.BlogMapper;
+import com.example.blogserver.mapper.FavoritesMapper;
 import com.example.blogserver.mapper.TagMapper;
 import com.example.blogserver.mapper.TypeMapper;
 import com.example.blogserver.service.*;
@@ -311,9 +313,13 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
 
 
     @Override
-    public Page<BlogVo> findFavoritesPage(QueryPageBean queryPageBean, Long uid) {
-            Page<BlogVo> blogVOPage = new Page<BlogVo>();
+    public Page<FavoriteVo> findFavoritesPage(QueryPageBean queryPageBean, Long uid) {
+
+        Page<FavoriteVo> blogVOPage = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
             blogVOPage.setRecords(blogMapper.findFavoritesPage(queryPageBean, uid));
+        QueryWrapper<Favorites> wrapper = new QueryWrapper<>();
+        wrapper.eq("uid", uid);
+        blogVOPage.setTotal(favoritesService.count(wrapper));
             return blogVOPage;
         }
 

@@ -183,7 +183,7 @@ public class BlogController {
     @OptLog(optType = OptTypeConst.Get)
     @LoginRequired
     @ApiOperation(value = "收藏夹分页查询", notes = "返回分页数据")
-    @PostMapping("/admin/findFavoritesPage")
+    @GetMapping("/admin/findFavoritesPage")
     public R findFavoritesPage( QueryPageBean queryPageBean) {
         String uid=JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
         return R.data( blogService.findFavoritesPage(queryPageBean, Long.valueOf(uid)),"获取分页数据成功");
