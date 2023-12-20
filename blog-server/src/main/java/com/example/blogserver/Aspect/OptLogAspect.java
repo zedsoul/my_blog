@@ -18,6 +18,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.annotation.Resource;
@@ -84,7 +85,19 @@ public class OptLogAspect {
         // 请求方法
         operationLog.setOptMethod(methodName);
         // 请求参数
-        operationLog.setRequestParam(JSON.toJSONString(joinPoint.getArgs()));
+        Object[] args = joinPoint.getArgs();
+            if(args.length!=0) {
+                if (args[0] instanceof MultipartFile) {
+                    // 参数是 MultipartFile 类型
+                    operationLog.setRequestParam("文件上传");
+                    // 在这里可以执行针对文件类型的操作
+                } else {
+                    operationLog.setRequestParam(JSON.toJSONString(joinPoint.getArgs()));
+                }
+            }else {
+                operationLog.setRequestParam("参数为空！");
+            }
+
         // 返回结果
         operationLog.setResponseData(JSON.toJSONString(keys));
         // 请求用户ID

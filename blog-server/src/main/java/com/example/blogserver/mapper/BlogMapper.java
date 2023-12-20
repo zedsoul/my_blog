@@ -3,6 +3,8 @@ package com.example.blogserver.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.blogserver.Vo.BlogVo;
+import com.example.blogserver.Vo.FavoriteVo;
+import com.example.blogserver.Vo.FindPageVo;
 import com.example.blogserver.entity.QueryPageBean;
 import com.zlc.blogcommon.dto.BlogBackDTO;
 import com.zlc.blogcommon.dto.BlogStatisticsDTO;
@@ -46,7 +48,24 @@ public interface BlogMapper extends BaseMapper<Blog> {
     @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
             "FROM blog b,type t " +
             "WHERE b.type_id = t.type_id AND b.uid = #{uid} LIMIT #{start},#{pageSize} ")
-    List<BlogVo> getAllBlogs(Long uid, Integer start, Integer pageSize);
+    List<FindPageVo> getAllBlogs(Long uid, Integer start, Integer pageSize);
+
+    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+            "FROM blog b,type t " +
+            "WHERE b.type_id = t.type_id AND b.uid = #{uid}  and b.title=#{title} LIMIT #{start},#{pageSize} ")
+    List<FindPageVo> getBlogByTitle(Long uid, Integer start, Integer pageSize,String title);
+
+    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+            "FROM blog b,type t " +
+            "WHERE b.type_id = t.type_id AND b.uid = #{uid}  and b.type_id=#{typeId} LIMIT #{start},#{pageSize} ")
+    List<FindPageVo> getBlogByType(Long uid, Integer start, Integer pageSize,Integer typeId);
+
+
+    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+            "FROM blog b,type t " +
+            "WHERE b.type_id = t.type_id AND b.uid = #{uid}  and b.type_id=#{typeId} and b.title=#{title} LIMIT #{start},#{pageSize} ")
+    List<FindPageVo> getBlogByTitleAndType(Long uid, Integer start, Integer pageSize,String title,Integer typeId);
+
 
     /**
      * 获取博客列表(多表查询)
@@ -71,7 +90,7 @@ public interface BlogMapper extends BaseMapper<Blog> {
      * @param uid 用户id
      * @return
      */
-    List<BlogVo> findFavoritesPage(@Param("queryPageBean") QueryPageBean queryPageBean, @Param("uid") Long uid);
+    List<FavoriteVo> findFavoritesPage(@Param("queryPageBean") QueryPageBean queryPageBean, @Param("uid") Long uid);
 
     /**
      * 获取管理后台对应博文数量

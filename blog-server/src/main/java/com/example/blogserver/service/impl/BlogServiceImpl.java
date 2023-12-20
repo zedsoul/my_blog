@@ -12,12 +12,15 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.blogserver.Utils.MarkdownUtils;
 import com.example.blogserver.Vo.BlogVo;
+import com.example.blogserver.Vo.FavoriteVo;
+import com.example.blogserver.Vo.FindPageVo;
 import com.example.blogserver.Vo.displayBlogVo;
 import com.example.blogserver.dto.BlogBackInfoDTO;
 import com.example.blogserver.entity.*;
 import com.example.blogserver.exception.BizException;
 import com.example.blogserver.filter.SensitiveFilter;
 import com.example.blogserver.mapper.BlogMapper;
+import com.example.blogserver.mapper.FavoritesMapper;
 import com.example.blogserver.mapper.TagMapper;
 import com.example.blogserver.mapper.TypeMapper;
 import com.example.blogserver.service.*;
@@ -74,6 +77,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
     ITagService tagService;
 
 
+
     private Integer currentPage;
     private Integer pageSize;
     private Integer start;
@@ -96,12 +100,15 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
             blog.setBlogId(blogId)
                     .setUid(blogVo.getUid())
                     .setCreateTime(LocalDateTime.now())
-                    .setPublished(false)
-                    .setRecommend(false)
+                    .setPublished(true)
+                    .setRecommend(blogVo.getRecommend())
                     .setViews(0)
-                    .setAppreciation(false)
-                    .setCommentAble(false)
-                    .setCopyright(false);
+                    .setAppreciation(blogVo.getAppreciation())
+                    .setCommentAble(blogVo.getCommentAble())
+                    .setCopyright(blogVo.getCopyright())
+                    .setTypeId(blogVo.getTypeId())
+                    .setContent(blogVo.getContent())
+                    .setDescription(blogVo.getDescription());
             save(blog);
             //保存博客对应的标签
             blogTagService.addOneBlogTag(blog.getBlogId(), blogVo.getTags());
@@ -136,7 +143,8 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
         thumbsUpService.remove(new LambdaQueryWrapper<ThumbsUp>().in(ThumbsUp::getBlogId, blogIdList));
         favoritesService.remove(new LambdaQueryWrapper<Favorites>().in(Favorites::getBlogId, blogIdList));
         commentService.remove(new LambdaQueryWrapper<Comment>().in(Comment::getBlogId, blogIdList));// 删除博客下的所有评论数据
-        removeByIds(blogIdList); //删除博客
+        boolean FALg = removeByIds(blogIdList);//删除博客
+
     }
 
     /**
@@ -305,9 +313,13 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
 
 
     @Override
-    public Page<BlogVo> findFavoritesPage(QueryPageBean queryPageBean, Long uid) {
-            Page<BlogVo> blogVOPage = new Page<BlogVo>();
+    public Page<FavoriteVo> findFavoritesPage(QueryPageBean queryPageBean, Long uid) {
+
+        Page<FavoriteVo> blogVOPage = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
             blogVOPage.setRecords(blogMapper.findFavoritesPage(queryPageBean, uid));
+        QueryWrapper<Favorites> wrapper = new QueryWrapper<>();
+        wrapper.eq("uid", uid);
+        blogVOPage.setTotal(favoritesService.count(wrapper));
             return blogVOPage;
         }
 
@@ -408,17 +420,28 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
     }
 
     @Override
-    public Page<BlogVo> findPage(QueryPageBean queryPageBean, Long uid) {
+    public Page<FindPageVo> findPage(QueryPageBean queryPageBean, Long uid, String title, Integer typeId) {
         currentPage = queryPageBean.getCurrentPage();
         pageSize = queryPageBean.getPageSize();
         start = (currentPage - 1) * pageSize;
 
         //设置分页条件
-        Page<BlogVo> page = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
+        Page<FindPageVo> page = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         QueryWrapper<Blog> wrapper = new QueryWrapper<>();
         wrapper.eq("uid", uid);
         //执行全部查询
-        page.setRecords(blogMapper.getAllBlogs(uid, start, pageSize));
+        if (title ==null && typeId == null) {
+            page.setRecords(blogMapper.getAllBlogs(uid, start, pageSize));
+        } else {
+            if (title != null && typeId != null) {
+                page.setRecords(blogMapper.getBlogByTitleAndType(uid, start, pageSize, title, typeId));
+            } else if (title != null) {
+                page.setRecords(blogMapper.getBlogByTitle(uid, start, pageSize, title));
+            } else {
+                page.setRecords(blogMapper.getBlogByType(uid, start, pageSize, typeId));
+            }
+        }
+
         //查询总记录数
         page.setTotal(blogMapper.selectCount(wrapper));
         return page;
@@ -470,6 +493,12 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
                 blogVo.setNickname(user.getNickname());
                 blogVo.setAvatar(user.getAvatar());
             }
+            //设置博客点赞数
+            int thumbscount = thumbsUpService.count(new LambdaQueryWrapper<ThumbsUp>().eq(ThumbsUp::getBlogId, blog.getBlogId()));
+            blogVo.setThumbsCounts(thumbscount);
+            //设置博客收藏数量
+            int favoritecount = favoritesService.count(new LambdaQueryWrapper<Favorites>().eq(Favorites::getBlogId, blog.getBlogId()));
+            blogVo.setFavoriteCounts(favoritecount);
             return blogVo;
         }).collect(Collectors.toList());
 

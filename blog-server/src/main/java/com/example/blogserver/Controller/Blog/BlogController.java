@@ -27,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/blog")
 @Slf4j
+
 public class BlogController {
 @Autowired
     BlogServiceImpl blogService;
@@ -35,10 +36,12 @@ public class BlogController {
     @OptLog(optType = OptTypeConst.SAVE)
     @LoginRequired
     @ApiOperation(value = "个人后台分页查询", notes = "返回分页数据")
-    @PostMapping("/admin/findPage")
+    @GetMapping("/admin/findPage")
     public R findPage( QueryPageBean queryPageBean) {
         String uid=JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
-        return R.data( blogService.findPage(queryPageBean, Long.valueOf(uid)),"获取分页数据成功");
+        String title = queryPageBean.getQueryString();
+        Integer typeId = queryPageBean.getTypeId();
+        return R.data( blogService.findPage(queryPageBean, Long.valueOf(uid),title,typeId),"获取分页数据成功");
     }
 
 
@@ -59,7 +62,7 @@ public class BlogController {
     @OptLog(optType = OptTypeConst.SAVE_OR_UPDATE)
     @ApiOperation(value = "用户添加或更新博客")
     @PostMapping("/addorupdate")
-    public R addOrupdate(BlogVo blogVo){
+    public R addOrupdate(@RequestBody  BlogVo blogVo){
         //获取token
        String uid=JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
         blogVo.setUid(Long.valueOf(uid));
@@ -180,7 +183,7 @@ public class BlogController {
     @OptLog(optType = OptTypeConst.Get)
     @LoginRequired
     @ApiOperation(value = "收藏夹分页查询", notes = "返回分页数据")
-    @PostMapping("/admin/findFavoritesPage")
+    @GetMapping("/admin/findFavoritesPage")
     public R findFavoritesPage( QueryPageBean queryPageBean) {
         String uid=JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
         return R.data( blogService.findFavoritesPage(queryPageBean, Long.valueOf(uid)),"获取分页数据成功");

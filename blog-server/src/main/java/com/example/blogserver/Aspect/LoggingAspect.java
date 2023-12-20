@@ -26,7 +26,7 @@ public class LoggingAspect {
         String methodName = joinPoint.getSignature().toShortString();
         String methodPath = request != null ? request.getRequestURI() : "Unknown";
         String host = request != null ?  IpUtils.getIpAddr(request) : "Unknown";
-        String headers = request != null ? extractHeaders(request) : "No headers";
+        String headers = request != null ? request.getHeader("jj-auth") : "No headers";
         System.out.println("=========================接口调用=========================");
         System.out.println("-----------------------------------------------------------");
         System.out.println("Method Path: " + methodPath);

@@ -29,7 +29,7 @@ import java.util.List;
 @Api(value = "后台分类管理模块", description = "分类管理模块的接口信息")
 @RequestMapping("/type")
 @RestController
-@CrossOrigin
+
 public class TypeController {
 
 

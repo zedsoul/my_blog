@@ -28,12 +28,15 @@
     </sql>
 
 
-    <select id="findFavoritesPage" resultType="com.example.blogserver.Vo.BlogVo">
+    <select id="findFavoritesPage" resultType="com.example.blogserver.Vo.FavoriteVo">
         SELECT b.blog_id, b.title, b.description, t.type_name, b.create_time
         FROM  blog b, favorites f, type t
         WHERE ${uid} = f.uid AND f.blog_id = b.blog_id AND t.type_id = b.type_id
         <if test="queryPageBean.queryString !=null">
             AND b.title LIKE '%${queryPageBean.queryString}%'
+        </if>
+        <if test="queryPageBean.queryString !=null">
+            AND b.type_id  ='${queryPageBean.typeId}'
         </if>
         ORDER BY f.create_time DESC
         LIMIT ${queryPageBean.pageSize * (queryPageBean.currentPage-1)},#{queryPageBean.pageSize}

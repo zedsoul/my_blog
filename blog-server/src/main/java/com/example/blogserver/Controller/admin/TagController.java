@@ -29,7 +29,7 @@ import static com.zlc.blogcommon.constant.OptTypeConst.SAVE_OR_UPDATE;
 @Api(value = "后台标签管理模块", description = "标签管理模块的接口信息")
 @RequestMapping("/tag")
 @RestController
-@CrossOrigin
+
 public class TagController {
     @Resource
     private ITagService tagService;
