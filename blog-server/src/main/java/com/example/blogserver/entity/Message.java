@@ -33,10 +33,7 @@ public class Message implements Serializable {
     @TableId(value = "mid", type = IdType.NONE)
     private Long mid;
 
-    /**
-     * 弹幕过屏时间
-     */
-    private String time;
+
 
     /**
      * 留言内容

@@ -56,7 +56,7 @@ public interface IBlogService extends IService<Blog> {
      * @param blog_id
      * @return blog
      */
-    BlogVo getOneBlog(Long blog_id);
+    BlogVo getOneBlog(Long blog_id,String uid);
 
 
     /**

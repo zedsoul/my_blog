@@ -90,4 +90,17 @@ public class BlogVo {
     //标签
     private List<String> tags;
 
+    //浏览数
+    private  Integer views;
+    //点赞数
+    private  Integer thumbs;
+    //收藏数
+    private  Integer favorite;
+    //评论数
+    private  Integer comments;
+    //是否点赞
+    private  Boolean isThumbs;
+    //是否收藏
+    private Boolean isFavorite;
+
 }

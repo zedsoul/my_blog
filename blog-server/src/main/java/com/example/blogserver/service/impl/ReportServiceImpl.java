@@ -43,7 +43,7 @@ public class ReportServiceImpl implements ReportService {
     private ArrayList<Object> series;   // 相当于series
     private HashMap<Object, Object> seriesMap; // 里面有个data数组存放要渲染的数据
 
-    @Cacheable(value = {"Report"}, key = "#root.methodName+'['+#uid+']'")
+
     public Map<String, Object> getReport(Long uid) throws Exception {
         map = new HashMap<>();
         series = new ArrayList<>();
@@ -87,7 +87,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
 
-    public Map<String, Object> getReport2(Long uid) throws Exception {
+    public Map<String, Object>  getReport2(Long uid) throws Exception {
         map = new HashMap<>();  // 相当于option
         series = new ArrayList<>(); // 相当于series
         Map<String, Object> legend = new HashMap<>();   // 相当于legend

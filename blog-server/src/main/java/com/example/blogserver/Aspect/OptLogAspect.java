@@ -92,7 +92,12 @@ public class OptLogAspect {
                     operationLog.setRequestParam("文件上传");
                     // 在这里可以执行针对文件类型的操作
                 } else {
-                    operationLog.setRequestParam(JSON.toJSONString(joinPoint.getArgs()));
+                    try {
+
+                        operationLog.setRequestParam(JSON.toJSONString(joinPoint.getArgs()));
+                    }catch (Exception e){
+                        operationLog.setRequestParam("参数不能被序列化获取！");
+                    }
                 }
             }else {
                 operationLog.setRequestParam("参数为空！");
@@ -126,6 +131,7 @@ public class OptLogAspect {
         operationLog.setOptUrl(request.getRequestURI());
         operationLog.setCreateTime(LocalDateTime.now());
         operationLogDao.save(operationLog);
+
     }
 
 }
