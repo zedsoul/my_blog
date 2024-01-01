@@ -1,5 +1,5 @@
 
-/log/
+/log/blog-dev.log/spring.log
 
 # Log file
 *.log
