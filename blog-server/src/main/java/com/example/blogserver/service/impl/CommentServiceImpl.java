@@ -75,7 +75,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Override
     public Page<CommentVO> adminComments(QueryPageBean queryPageBean) {
         Page<CommentVO> commentVOPage = new Page<>();
-        commentVOPage.setRecords(commentDao.adminComments(queryPageBean));
+        String queryString = queryPageBean.getQueryString();
+        commentVOPage.setRecords(commentDao.adminComments(queryString));
         commentVOPage.setTotal(commentDao.selectCount(null));
         return commentVOPage;
     }

@@ -43,5 +43,6 @@ public interface CommentMapper extends BaseMapper<Comment> {
      * @param queryPageBean 实体
      * @return list
      */
-    List<CommentVO> adminComments(@Param("queryPageBean") QueryPageBean queryPageBean);
+    @Select("select u.nickname,b.title,c.content,c.create_time,c.comment_id,c.blog_id ,c.uid from user u left join comment c on  c.uid = u.uid left join  blog b  on   c.blog_id=b.blog_id where  u.uid=#{queryString}")
+    List<CommentVO> adminComments( String queryString);
 }

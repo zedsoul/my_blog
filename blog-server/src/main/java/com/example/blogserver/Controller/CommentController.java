@@ -59,12 +59,12 @@ public class CommentController {
         return R.data(200,"回复评论信息成功");
     }
 
-    @LoginRequired
+
     @ApiOperation(value = "用户删除评论")
-    @DeleteMapping("/admin/del/{blogId}/{commentId}")
+    @DeleteMapping("/admin/del/{blogId}/{commentId}/{uid}")
     @OptLog(optType = OptTypeConst.Get)
-    public R delComment(@PathVariable Long blogId, @PathVariable Long commentId, HttpServletRequest request) {
-        String uid= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
+    public R delComment(@PathVariable Long blogId, @PathVariable Long commentId,@PathVariable Long uid ) {
+
         if (commentService.delComment(blogId, commentId, Long.valueOf(uid)))
             return R.data("删除成功");
         return R.data("您删除的评论不是你发布的，你无权删除！");
@@ -74,6 +74,8 @@ public class CommentController {
     @PostMapping("/admin/commentPage")
     @OptLog(optType = OptTypeConst.Get)
     public R adminComments(@RequestBody QueryPageBean queryPageBean){
+        String uid= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
+        queryPageBean.setQueryString(uid);
         return R.data(commentService.adminComments(queryPageBean),"获取分页数据成功");
     }
 
