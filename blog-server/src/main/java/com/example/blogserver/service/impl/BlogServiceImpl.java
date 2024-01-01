@@ -10,7 +10,9 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.blogserver.Utils.JWTUtils;
 import com.example.blogserver.Utils.MarkdownUtils;
+import com.example.blogserver.Utils.WebUtil;
 import com.example.blogserver.Vo.BlogVo;
 import com.example.blogserver.Vo.FavoriteVo;
 import com.example.blogserver.Vo.FindPageVo;
@@ -34,6 +36,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -162,7 +165,9 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
      * 根据id获取博客的信息
      */
     @Override
-    public BlogVo getOneBlog(Long blogId) {
+    public BlogVo getOneBlog(Long blogId,String uid) {
+        //添加属性值
+
         Blog blog = getOne(new LambdaQueryWrapper<Blog>().eq(Blog::getBlogId, blogId));
         BlogVo blogVo=new BlogVo();
         User user = userService.getById(blog.getUid());
@@ -170,6 +175,21 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
             throw new BizException("博客没有对应的发布人，可能为垃圾数据请及时删除！");
         }
         BeanUtils.copyProperties(blog, blogVo);
+        blogVo.setThumbs(thumbsUpService.count(new LambdaQueryWrapper<ThumbsUp>().eq(ThumbsUp::getBlogId, blogId)));
+        blogVo.setFavorite(favoritesService.count(new LambdaQueryWrapper<Favorites>().eq(Favorites::getBlogId,blogId)));
+        blogVo.setComments(commentService.count(new LambdaQueryWrapper<Comment>().eq(Comment::getBlogId,blogId)));
+        int thumbs = thumbsUpService.count(new LambdaQueryWrapper<ThumbsUp>().eq(ThumbsUp::getBlogId, blogId).eq(ThumbsUp::getUid, uid));
+        if(thumbs>0){
+            blogVo.setIsThumbs(true);
+        }else {
+            blogVo.setIsThumbs(false);
+        }
+        int favoriteCount = favoritesService.count(new LambdaQueryWrapper<Favorites>().eq(Favorites::getBlogId, blogId).eq(Favorites::getUid, uid));
+        if(favoriteCount>0){
+            blogVo.setIsFavorite(true);
+        }else {
+            blogVo.setIsFavorite(false);
+        }
         String content = blog.getContent();
         blogVo.setNickname(user.getNickname());
         blogVo.setAvatar(user.getAvatar());
@@ -206,6 +226,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
         ThumbsUp thumbsUp = new ThumbsUp();
         thumbsUp.setBlogId(blogId);
         thumbsUp.setUid(uid);
+        thumbsUp.setCreateTime(LocalDateTime.now());
         thumbsUpService.save(thumbsUp);
         blogDB.setThumbs(blogDB.getThumbs() + 1);
         updateById(blogDB);
@@ -232,6 +253,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
         Favorites favorites = new Favorites();
         favorites.setBlogId(blogId);
         favorites.setUid(uid);
+        favorites.setCreateTime(LocalDateTime.now());
         favoritesService.save(favorites);
         return true;
     }

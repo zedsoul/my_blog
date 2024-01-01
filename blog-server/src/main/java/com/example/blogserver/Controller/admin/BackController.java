@@ -38,7 +38,7 @@ public class BackController {
     @PostMapping("/admin/{bucket}")
     public R avatarUpload(MultipartFile file,@PathVariable("bucket") String bucket ) {
         String email= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("email").asString();
-        System.out.println(bucket);
+
         return R.data( MinioUtil.upload(file,email,bucket),"上传成功");
     }
     @OptLog(optType = OptTypeConst.UPDATE)

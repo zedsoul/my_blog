@@ -31,7 +31,7 @@ import static com.zlc.blogcommon.constant.OptTypeConst.SAVE_OR_UPDATE;
 @Api(value = "后台数据统计模块", description = "后台数据统计模块的接口信息")
 @RequestMapping("/report")
 @RestController
-@CrossOrigin
+
 public class ReportController {
     @Resource
     private ReportService reportService;

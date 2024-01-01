@@ -35,7 +35,7 @@
         <if test="queryPageBean.queryString !=null">
             AND b.title LIKE '%${queryPageBean.queryString}%'
         </if>
-        <if test="queryPageBean.queryString !=null">
+        <if test="queryPageBean.typeId !=null">
             AND b.type_id  ='${queryPageBean.typeId}'
         </if>
         ORDER BY f.create_time DESC

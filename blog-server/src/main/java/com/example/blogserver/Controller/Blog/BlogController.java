@@ -110,10 +110,11 @@ public class BlogController {
     @ApiOperation(value = "根据id获取博客的信息")
     @GetMapping("/id/{blogId}")
     public R getOneBlog(@PathVariable("blogId") Long blogId) {
+        String uid= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
         BlogVo blogVo=null;
         try {
         blogService.updateBlogViewsCount(blogId);
-      blogVo=  blogService.getOneBlog(blogId);
+      blogVo=  blogService.getOneBlog(blogId,uid);
         } catch (Exception e) {
             e.printStackTrace();
             return R.fail(100,e.getMessage());
