@@ -1,11 +1,15 @@
 package com.example.blogserver.service;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.blogserver.Vo.RegistedVo;
+import com.example.blogserver.Vo.UserVo;
+import com.example.blogserver.entity.QueryPageBean;
 import com.zlc.blogcommon.po.User;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -67,4 +71,12 @@ public interface UserService extends IService<User> {
      * @return token
      */
     String getToken(User user);
+
+
+    /**
+     * 获取用户分页数据
+     * @param queryPageBean
+     * @return {@link Object}
+     */
+    Page<UserVo> getUserPage(QueryPageBean queryPageBean);
 }

@@ -47,7 +47,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
         return i == 1;
     }
 
-    @Cacheable(value = {"MessagePage"}, key = "#root.methodName+'['+#queryPageBean.currentPage+']'")
+
     public Page<Message> getMessagePage(QueryPageBean queryPageBean) {
         Page<Message> page = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         QueryWrapper<Message> wrapper = new QueryWrapper<>();

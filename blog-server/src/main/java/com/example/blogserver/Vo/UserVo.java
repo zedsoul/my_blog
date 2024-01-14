@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 public class UserVo {
     private Long uid;
 
+    private  Long rid;
+
     private String nickname;
 
     private String username;

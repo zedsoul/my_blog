@@ -1,6 +1,7 @@
 package com.example.blogserver.Controller.User;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.blogserver.Utils.JWTUtils;
 import com.example.blogserver.Utils.WebUtil;
 import com.example.blogserver.Vo.RegistedVo;
@@ -8,6 +9,10 @@ import com.example.blogserver.Vo.UserVo;
 import com.example.blogserver.annotation.IpRequired;
 import com.example.blogserver.annotation.LoginRequired;
 import com.example.blogserver.annotation.OptLog;
+import com.example.blogserver.entity.QueryPageBean;
+import com.example.blogserver.entity.TbUserRole;
+import com.example.blogserver.mapper.TbUserRoleMapper;
+import com.example.blogserver.service.ITbUserRoleService;
 import com.example.blogserver.service.impl.UserServiceImpl;
 import com.zlc.blogcommon.constant.OptTypeConst;
 import com.zlc.blogcommon.po.User;
@@ -29,7 +34,10 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
     @Autowired
     UserServiceImpl userService;
-
+    @Autowired
+    TbUserRoleMapper userRoleMapper;
+    @Autowired
+    ITbUserRoleService roleService;
     /**
      * 用户注册
      * @param register
@@ -104,9 +112,33 @@ public class UserController {
     @GetMapping("/userinfo")
     public R userInfo(){
         String uid= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
+        Long rid = userRoleMapper.rid(Long.valueOf(uid));
         User user = userService.getById(uid);
         UserVo userVo = BeanUtil.copyProperties(user, UserVo.class);
+        userVo.setRid(rid);
         return R.data(200,userVo,"用户数据获取成功！");
 
+    }
+
+    @OptLog(optType = OptTypeConst.Get)
+    @ApiOperation("获取用户分页信息")
+    @GetMapping("/admin/getuserpage")
+    public R getUserPage( QueryPageBean queryPageBean) {
+
+        return R.data( userService.getUserPage(queryPageBean),"获取留言分页信息");
+    }
+
+    @OptLog(optType = OptTypeConst.Get)
+    @ApiOperation("删除用户信息")
+    @GetMapping("/deleteusered")
+    public R deleteUser( String  uid) {
+        return R.data( userService.remove(new LambdaQueryWrapper<User>().eq(User::getUid,uid)),"删除用户信息成功");
+    }
+
+    @OptLog(optType = OptTypeConst.UPDATE)
+    @ApiOperation("更改用户权限")
+    @PostMapping("/admin/update/user")
+    public R updateUser( @RequestBody  TbUserRole tbUserRole) {
+        return R.data( roleService.update(tbUserRole,new LambdaQueryWrapper<TbUserRole>().eq(TbUserRole::getUid,tbUserRole.getUid())),"更新用户权限用户信息成功");
     }
 }
