@@ -6,6 +6,7 @@ import com.example.blogserver.Utils.WebUtil;
 import com.example.blogserver.Vo.BlogVo;
 import com.example.blogserver.annotation.LoginRequired;
 import com.example.blogserver.annotation.OptLog;
+import com.example.blogserver.entity.BlogExamRequest;
 import com.example.blogserver.entity.QueryPageBean;
 import com.example.blogserver.service.impl.BlogServiceImpl;
 import com.zlc.blogcommon.constant.OptTypeConst;
@@ -196,5 +197,33 @@ public class BlogController {
     @GetMapping("/blogInfo")
     public R blogInfo() {
         return R.data( blogService.blogInfo(),"获取分页数据成功");
+    }
+
+    @OptLog(optType = OptTypeConst.SAVE)
+    @LoginRequired
+    @ApiOperation(value = "管理员后台分页查询", notes = "返回分页数据")
+    @GetMapping("/admin/adminfindPage")
+    public R adminFindPage( QueryPageBean queryPageBean) {
+        String title = queryPageBean.getQueryString();
+        Integer typeId = queryPageBean.getTypeId();
+        return R.data( blogService.adminFindPage(queryPageBean, title,typeId),"获取分页数据成功");
+    }
+
+
+    @OptLog(optType = OptTypeConst.Get)
+    @LoginRequired
+    @ApiOperation(value = "管理员后台分页查询", notes = "返回分页数据")
+    @GetMapping("/admin/examblog")
+    public R examBlog(QueryPageBean queryPageBean ) {
+        return R.data( blogService.examBlogPage(queryPageBean),"获取分页数据成功");
+    }
+    @OptLog(optType = OptTypeConst.Get)
+    @LoginRequired
+    @ApiOperation(value = "管理员后台分页查询", notes = "管理员后台-审核博客-审核成功/驳回")
+    @PostMapping("/admin/examblogs")
+    public R examBlogs(@RequestBody BlogExamRequest blogExamRequest) {
+        Long bid = blogExamRequest.getBid();
+        int operationId = blogExamRequest.getOperationId();
+        return R.data( blogService.examBlogs(bid,operationId),"修改数据成功数据成功");
     }
 }

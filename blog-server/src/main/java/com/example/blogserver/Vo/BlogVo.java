@@ -48,7 +48,7 @@ public class BlogVo {
     /**
      * 发布状态
      */
-    private Boolean published;
+    private Integer published;
 
     /**
      * 推荐状态

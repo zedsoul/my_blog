@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
+
 /**
  * <p>
  *  前端控制器
@@ -37,6 +39,7 @@ public class HistoryController {
     public R addRecord(  @RequestBody  History history){
       String uid= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
      history.setUid(Long.valueOf(uid));
+     history.setCreateTime(LocalDateTime.now());
      if( historyService.addRecord(history)){
          return R.data("历史记录+1");
      }

@@ -86,4 +86,21 @@ public class CommentController {
         commentService.removeByIds(commentIdList);
         return R.data("删除评论成功");
     }
+
+    @ApiOperation(value = "后台评论管理-查询博客获取后台的评论分页数据")
+    @PostMapping("/admin/managercomments")
+    @OptLog(optType = OptTypeConst.Get)
+    public R selectAllComments(@RequestBody QueryPageBean queryPageBean){
+        String uid= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
+        queryPageBean.setQueryString(uid);
+        return R.data(commentService.selectAllComments(queryPageBean),"获取分页数据成功");
+    }
+
+    @ApiOperation(value = "后台评论管理-根据博客id查询评论")
+    @GetMapping("/admin/selectcommentsbyid")
+    @OptLog(optType = OptTypeConst.Get)
+    public R selectCommentsById(Long bid){
+        return R.data(commentService.selectCommentsById(bid),"获取分页数据成功");
+    }
+
 }

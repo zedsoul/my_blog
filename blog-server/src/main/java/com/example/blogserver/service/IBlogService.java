@@ -4,10 +4,7 @@ package com.example.blogserver.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.blogserver.Vo.BlogVo;
-import com.example.blogserver.Vo.FavoriteVo;
-import com.example.blogserver.Vo.FindPageVo;
-import com.example.blogserver.Vo.displayBlogVo;
+import com.example.blogserver.Vo.*;
 import com.example.blogserver.dto.BlogBackInfoDTO;
 import com.example.blogserver.entity.QueryPageBean;
 
@@ -133,4 +130,8 @@ public interface IBlogService extends IService<Blog> {
 
 
     IPage<displayBlogVo> displayblog(QueryPageBean queryPageBean);
+
+    Page<examBlogVo> examBlogPage(QueryPageBean queryPageBean);
+
+    Boolean examBlogs(Long bid,int operationId);
 }

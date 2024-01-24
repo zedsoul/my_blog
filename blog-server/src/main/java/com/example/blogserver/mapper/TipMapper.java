@@ -21,6 +21,6 @@ public interface TipMapper extends BaseMapper<Tip> {
     @Select("select t.id,u.nickname, t.message, b.title,t.blog_id ,t.create_time from tip t left join user u on t.myself_id=u.uid  left join blog b on t.blog_id=b.blog_id where t.myself_id=#{uid} ORDER BY t.create_time DESC   LIMIT  #{pageSize} offset #{offset}")
     List<TipVO> Records(Integer offset , Integer pageSize, String uid);
 
-    @Select( "select u.uid  from tip t left join  blog b on t.blog_id=b.blog_id left join user u on b.uid=u.uid  where t.blog_id=#{blogId}" )
-    List<Long> myselfName (Long blogId);
+    @Select( "select u.uid  from   blog b left join user u on b.uid=u.uid  where b.blog_id=#{blogId}" )
+    Long myselfName (Long blogId);
 }

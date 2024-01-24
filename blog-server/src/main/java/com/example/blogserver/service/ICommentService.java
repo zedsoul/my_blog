@@ -2,6 +2,8 @@ package com.example.blogserver.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.blogserver.Vo.CommentVO;
+import com.example.blogserver.Vo.adminCommentVo;
+import com.example.blogserver.Vo.selectAllCommentsVo;
 import com.example.blogserver.entity.Comment;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.blogserver.entity.QueryPageBean;
@@ -47,4 +49,19 @@ public interface ICommentService extends IService<Comment> {
      * @return page
      */
     Page<CommentVO> adminComments(QueryPageBean queryPageBean);
+
+
+    /**
+     * 获取后台评论的分页数据
+     * @param queryPageBean 分页实体
+     * @return page
+     */
+    Page<selectAllCommentsVo> selectAllComments(QueryPageBean queryPageBean);
+
+    /**
+     * 获取后台评论的分页数据
+     * @param queryPageBean 分页实体
+     * @return page
+     */
+    List<adminCommentVo> selectCommentsById(Long bid);
 }

@@ -9,11 +9,10 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindPageVo {
-    private Long blogId;
-    private String typeName;
-    private Boolean recommend;
-    private Integer published;
-    private LocalDateTime updateTime;
+public class selectAllCommentsVo {
+    private  Long blogId;
     private String title;
+    private String nickname;
+    private int commentCounts;
+    private LocalDateTime createTime;
 }

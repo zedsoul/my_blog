@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.blogserver.Vo.BlogVo;
 import com.example.blogserver.Vo.FavoriteVo;
 import com.example.blogserver.Vo.FindPageVo;
+import com.example.blogserver.Vo.examBlogVo;
 import com.example.blogserver.entity.QueryPageBean;
 import com.zlc.blogcommon.dto.BlogBackDTO;
 import com.zlc.blogcommon.dto.BlogStatisticsDTO;
@@ -98,4 +99,36 @@ public interface BlogMapper extends BaseMapper<Blog> {
      * @return 用户id
      */
     Integer adminBlogPageCount(@Param("queryPageBean")QueryPageBean queryPageBean);
+
+
+    /**
+     * 管理员端获取对应用户的博客列表(多表查询)
+     *
+     * @param
+     * @return List
+     */
+    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+            "FROM blog b,type t " +
+            "WHERE b.type_id = t.type_id LIMIT #{start},#{pageSize} ")
+    List<FindPageVo> adminGetAllBlogs( Integer start, Integer pageSize);
+
+    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+            "FROM blog b,type t " +
+            "WHERE b.type_id = t.type_id  and b.title=#{title} LIMIT #{start},#{pageSize} ")
+    List<FindPageVo> adminGetBlogByTitle( Integer start, Integer pageSize,String title);
+
+    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+            "FROM blog b,type t " +
+            "WHERE b.type_id = t.type_id   and b.type_id=#{typeId} LIMIT #{start},#{pageSize} ")
+    List<FindPageVo> adminGetBlogByType( Integer start, Integer pageSize,Integer typeId);
+
+
+    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+            "FROM blog b,type t " +
+            "WHERE b.type_id = t.type_id   and b.type_id=#{typeId} and b.title=#{title} LIMIT #{start},#{pageSize} ")
+    List<FindPageVo> adminGetBlogByTitleAndType( Integer start, Integer pageSize,String title,Integer typeId);
+
+
+    @Select("select b.blog_id,b.title,u.nickname,b.content ,t.type_name,b.copyright,b.create_time,b.first_picture,b.description from blog b left join user u on b.uid=u.uid  left join type t on t.type_id=b.type_id where b.published=0 ORDER BY b.create_time DESC LIMIT #{start},#{pageSize}")
+    List<examBlogVo> examBlogPages(Integer start, Integer pageSize);
 }

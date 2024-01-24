@@ -5,15 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindPageVo {
+public class adminCommentVo {
+
     private Long blogId;
-    private String typeName;
-    private Boolean recommend;
-    private Integer published;
-    private LocalDateTime updateTime;
-    private String title;
+    private Long commentId;
+    private Long uid;
+    private String nickname;
+    private String content;
+    private LocalDateTime createTime;
 }

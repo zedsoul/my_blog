@@ -30,7 +30,7 @@ public class TipServiceImpl extends ServiceImpl<TipMapper, Tip> implements ITipS
 
     @Override
     public boolean addMessage(Tip tip) {
-        tip.setMyselfId(tipMapper.myselfName(tip.getBlogId()).get(0));
+        tip.setMyselfId(tipMapper.myselfName(tip.getBlogId()));
         return save(tip);
     }
 

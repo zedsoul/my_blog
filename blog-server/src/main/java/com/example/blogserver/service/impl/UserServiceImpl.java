@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.blogserver.Utils.IpUtils;
 import com.example.blogserver.Utils.JWTUtils;
+import com.example.blogserver.Utils.RedisUtil;
 import com.example.blogserver.Vo.HistoryVo;
 import com.example.blogserver.Vo.RegistedVo;
 import com.example.blogserver.Vo.UserVo;
@@ -42,7 +43,7 @@ import java.util.List;
 
 import static com.example.blogserver.Utils.CommonUtils.checkEmail;
 import static com.example.blogserver.Utils.CommonUtils.getRandomCode;
-import static com.example.blogserver.interceptors.AuthenticationInterceptor.redisUtil;
+
 import static com.zlc.blogcommon.constant.RabbitMQConst.EMAIL_EXCHANGE;
 import static com.zlc.blogcommon.constant.RedisConst.*;
 
@@ -63,6 +64,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private ITbUserRoleService roleService;
     @Resource
     private  UserMapper userMapper;
+    @Resource
+    private RedisUtil redisUtil;
 
     /**
      * @param register

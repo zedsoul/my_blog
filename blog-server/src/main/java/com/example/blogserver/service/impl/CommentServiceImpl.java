@@ -3,10 +3,14 @@ package com.example.blogserver.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.blogserver.Vo.CommentVO;
+import com.example.blogserver.Vo.adminCommentVo;
+import com.example.blogserver.Vo.selectAllCommentsVo;
 import com.example.blogserver.entity.Comment;
 import com.example.blogserver.entity.QueryPageBean;
 import com.example.blogserver.filter.SensitiveFilter;
+import com.example.blogserver.mapper.BlogMapper;
 import com.example.blogserver.mapper.CommentMapper;
+import com.example.blogserver.service.IBlogService;
 import com.example.blogserver.service.ICommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.cache.annotation.CacheEvict;
@@ -32,7 +36,8 @@ import java.util.Map;
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements ICommentService {
     @Resource
     private CommentMapper commentDao;
-
+    @Resource
+    private  BlogMapper blogMapper;
 
     public List<CommentVO> getCommentList(Long blogId) {
         // 获取一级评论的list
@@ -74,9 +79,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
 
     @Override
     public Page<CommentVO> adminComments(QueryPageBean queryPageBean) {
-        Page<CommentVO> commentVOPage = new Page<>();
+        Integer pageSize = queryPageBean.getPageSize();
+        Integer currentPage = queryPageBean.getCurrentPage();
+        int offset = pageSize * (currentPage - 1);
+        Page<CommentVO> commentVOPage = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         String queryString = queryPageBean.getQueryString();
-        commentVOPage.setRecords(commentDao.adminComments(queryString));
+        commentVOPage.setRecords(commentDao.adminComments(offset, pageSize,queryString));
         commentVOPage.setTotal(commentDao.selectCount(null));
         return commentVOPage;
     }
@@ -117,4 +125,21 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         }
         return rootList;
 }
- }
+
+    @Override
+    public Page<selectAllCommentsVo> selectAllComments(QueryPageBean queryPageBean) {
+        Integer pageSize = queryPageBean.getPageSize();
+        Integer currentPage = queryPageBean.getCurrentPage();
+        int offset = pageSize * (currentPage - 1);
+        Page<selectAllCommentsVo> commentVOPage = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
+        String queryString = queryPageBean.getQueryString();
+        commentVOPage.setRecords(commentDao.selectAllComments(offset, pageSize,queryString));
+       commentVOPage.setTotal(blogMapper.selectCount(null));
+        return commentVOPage;
+    }
+
+    @Override
+    public List<adminCommentVo> selectCommentsById(Long bid) {
+      return   commentDao.selectCommentsById(bid);
+    }
+}
