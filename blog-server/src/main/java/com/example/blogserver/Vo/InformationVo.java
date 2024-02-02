@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserVo {
+public class InformationVo {
     private Long uid;
 
     private  Long rid;
@@ -23,9 +23,16 @@ public class UserVo {
     private String username;
 
     private String email;
+
     private String avatar;
 
+    private String biliUrl;
 
+    private String qqUrl;
+
+    private String gitUrl;
+
+    private String twitterUrl;
     /**
      * 最近登录时间
      */

@@ -1,15 +1,20 @@
 package com.example.blogserver.Controller.admin;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.blogserver.Utils.JWTUtils;
 import com.example.blogserver.Utils.MinioUtil;
 import com.example.blogserver.Utils.WebUtil;
+import com.example.blogserver.Vo.InformationVo;
 import com.example.blogserver.Vo.UserVo;
 import com.example.blogserver.annotation.OptLog;
+import com.example.blogserver.entity.Iconed;
 import com.example.blogserver.entity.QueryPageBean;
+import com.example.blogserver.entity.User;
+import com.example.blogserver.service.impl.IconedServiceImpl;
 import com.example.blogserver.service.impl.UserServiceImpl;
 import com.zlc.blogcommon.constant.OptTypeConst;
-import com.zlc.blogcommon.po.User;
+
 import com.zlc.blogcommon.po.result.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +34,8 @@ import java.io.File;
 public class BackController {
     @Autowired
     UserServiceImpl userService;
+    @Autowired
+    IconedServiceImpl iconedService;
     /**
      * @param file
      * @return {@link R}
@@ -44,10 +51,13 @@ public class BackController {
     @OptLog(optType = OptTypeConst.UPDATE)
     @ApiOperation(value = "更新用户信息")
     @PostMapping("/admin/resetuser")
-    public R resetUser(@RequestBody  UserVo userVo){
+    public R resetUser(@RequestBody InformationVo userVo){
         String id= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
-        User user = BeanUtil.copyProperties(userVo, User.class);
+        com.example.blogserver.entity.User user = BeanUtil.copyProperties(userVo, User.class);
         user.setUid(Long.valueOf(id));
+        Iconed icon = BeanUtil.copyProperties(userVo, Iconed.class);
+        icon.setUserId(Long.valueOf(id));
+        iconedService.saveOrUpdate(icon, new LambdaQueryWrapper<Iconed>().eq(Iconed::getUserId,Long.valueOf(id)));
         return R.data( userService.updateById(user),"用户修改成功成功");
     }
 }

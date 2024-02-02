@@ -29,7 +29,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.zlc.blogcommon.dto.*;
 import com.zlc.blogcommon.po.Blog;
-import com.zlc.blogcommon.po.User;
 import com.zlc.blogcommon.vo.TypeVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +168,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
 
         Blog blog = getOne(new LambdaQueryWrapper<Blog>().eq(Blog::getBlogId, blogId));
         BlogVo blogVo=new BlogVo();
-        User user = userService.getById(blog.getUid());
+        com.example.blogserver.entity.User user = userService.getById(blog.getUid());
         if(user==null){
             throw new BizException("博客没有对应的发布人，可能为垃圾数据请及时删除！");
         }

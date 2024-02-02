@@ -17,48 +17,44 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author zlc
- * @since 2023-12-08
+ * @since 2024-01-25
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("link")
-public class Link implements Serializable {
+@TableName("group_chat")
+public class GroupChat implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * 友链id
+     * 消息id
      */
-    @TableId(value = "link_id", type = IdType.NONE)
-    private Long linkId;
+    @TableId(value = "msg_id", type = IdType.NONE)
+    private Long msgId;
 
     /**
-     * 友链名称
+     * 用户id
      */
-    private String linkName;
+    private Long uid;
 
-
+    private String content;
 
     /**
-     * 友链地址
-     */
-    private String blogLink;
-
-
-
-    /**
-     * 创建时间
+     * 发送消息的时间
      */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-
+    /**
+     * 群聊id
+     */
+    private Long roomId;
 
     /**
-     * 用户关联的友链
+     * 1：文字消息；2：图片
      */
-    private Long userId;
+    private Integer textType;
 
 
 }

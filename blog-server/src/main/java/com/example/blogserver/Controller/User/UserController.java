@@ -11,11 +11,11 @@ import com.example.blogserver.annotation.LoginRequired;
 import com.example.blogserver.annotation.OptLog;
 import com.example.blogserver.entity.QueryPageBean;
 import com.example.blogserver.entity.TbUserRole;
+import com.example.blogserver.entity.User;
 import com.example.blogserver.mapper.TbUserRoleMapper;
 import com.example.blogserver.service.ITbUserRoleService;
 import com.example.blogserver.service.impl.UserServiceImpl;
 import com.zlc.blogcommon.constant.OptTypeConst;
-import com.zlc.blogcommon.po.User;
 import com.zlc.blogcommon.po.result.R;
 import com.zlc.blogcommon.po.result.Result;
 import io.swagger.annotations.Api;
@@ -57,7 +57,25 @@ public class UserController {
 
         return R.fail(200,"用户账号注册成功");
     }
+    /**
+     * 管理员添加
+     * @param register
+     * @return {@link R}
+     */
+    @PostMapping("/adminregisted")
+    @IpRequired
+    public R adminregisted(@RequestBody RegistedVo register, HttpServletRequest request) {
 
+
+        try {
+            userService.adminRegisted(register,  request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.fail(100,e.getMessage());
+        }
+
+        return R.fail(200,"用户账号注册成功");
+    }
     /**
      * @param loginer
      * @return {@link R}
@@ -82,7 +100,7 @@ public class UserController {
      * 用户修改密码
      */
     @PostMapping("/resetpassword")
-    public R resetPassword(RegistedVo resetPassword){
+    public R resetPassword(@RequestBody  RegistedVo resetPassword){
         try {
             userService.resetPassword(resetPassword);
         } catch (Exception e) {
@@ -113,7 +131,7 @@ public class UserController {
     public R userInfo(){
         String uid= JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("id").asString();
         Long rid = userRoleMapper.rid(Long.valueOf(uid));
-        User user = userService.getById(uid);
+        com.example.blogserver.entity.User user = userService.getById(uid);
         UserVo userVo = BeanUtil.copyProperties(user, UserVo.class);
         userVo.setRid(rid);
         return R.data(200,userVo,"用户数据获取成功！");
@@ -132,7 +150,7 @@ public class UserController {
     @ApiOperation("删除用户信息")
     @GetMapping("/deleteusered")
     public R deleteUser( String  uid) {
-        return R.data( userService.remove(new LambdaQueryWrapper<User>().eq(User::getUid,uid)),"删除用户信息成功");
+        return R.data( userService.remove(new LambdaQueryWrapper<com.example.blogserver.entity.User>().eq(User::getUid,uid)),"删除用户信息成功");
     }
 
     @OptLog(optType = OptTypeConst.UPDATE)
@@ -140,5 +158,13 @@ public class UserController {
     @PostMapping("/admin/update/user")
     public R updateUser( @RequestBody  TbUserRole tbUserRole) {
         return R.data( roleService.update(tbUserRole,new LambdaQueryWrapper<TbUserRole>().eq(TbUserRole::getUid,tbUserRole.getUid())),"更新用户权限用户信息成功");
+    }
+
+    @OptLog(optType = OptTypeConst.Get)
+    @ApiOperation("获取用户头像，昵称")
+    @GetMapping("/admin/getnickNames")
+
+    public  R getNicknames(){
+        return R.data(userService.selectAllNicknames(),"获取用户信息成功！");
     }
 }

@@ -30,13 +30,13 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, Link> implements IL
     @Resource
     private LinkMapper linkDao;
 
-    public List<String> getLinkList(long userId) {
+    public List<Link> getLinkList(long userId) {
         QueryWrapper<Link> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", CommonConst.SHOW_LINKS)
-                .eq("user_id",userId)
-                .select("link_name");
-        return linkDao.selectList(wrapper).stream().map(
-                Link::getLinkName).collect(Collectors.toList());
+        wrapper
+                .eq("user_id",userId);
+
+        List<Link> links = linkDao.selectList(wrapper);
+        return links;
     }
 
 

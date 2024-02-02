@@ -6,7 +6,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.blogserver.Vo.RegistedVo;
 import com.example.blogserver.Vo.UserVo;
 import com.example.blogserver.entity.QueryPageBean;
-import com.zlc.blogcommon.po.User;
+import com.example.blogserver.entity.User;
+
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
  * @author zlc
  * @since 2023-11-15
  */
-public interface UserService extends IService<User> {
+public interface UserService extends IService<com.example.blogserver.entity.User> {
 
 
     /**
@@ -30,6 +31,7 @@ public interface UserService extends IService<User> {
      */
     Boolean registed(RegistedVo register, HttpServletRequest request);
 
+    Boolean adminRegisted(RegistedVo register, HttpServletRequest request);
 
     String  logined(RegistedVo register,HttpServletRequest request);
 
@@ -79,4 +81,11 @@ public interface UserService extends IService<User> {
      * @return {@link Object}
      */
     Page<UserVo> getUserPage(QueryPageBean queryPageBean);
+
+
+    User selectByUsername(String username);
+
+    User selectByUid(Long uid);
+
+     List<User> selectAllNicknames();
 }

@@ -1,6 +1,7 @@
 package com.zlc.blogcommon.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.time.LocalDateTime;
@@ -28,12 +29,13 @@ import lombok.experimental.Accessors;
  * @since 2021-01-27
  */
 @Data
-@Builder
+
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(value = "用户实体", description = "用户实体")
-@EqualsAndHashCode(callSuper = false)
-public class User extends Model<User> {
+
+@TableName("user")
+public class User {
 
     private static final long serialVersionUID = 1L;
 
@@ -92,9 +94,6 @@ public class User extends Model<User> {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime lastLoginTime;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.uid;
-    }
+
 
 }

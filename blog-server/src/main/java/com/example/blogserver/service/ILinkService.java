@@ -21,7 +21,7 @@ public interface ILinkService extends IService<Link> {
      * 获取友链信息列表
      * @return list
      */
-    List<String> getLinkList(long userId);
+    List<Link> getLinkList(long userId);
 
     /**
      * 添加友链

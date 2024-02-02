@@ -16,8 +16,10 @@ public class RegistedVo {
     public RegistedVo(String email) {
         this.email = email;
     }
-    String  email;
-    String  username;
-    String  password;
+
+    String email;
+    String username;
+    String password;
     String vertifyCode;
+
 }
