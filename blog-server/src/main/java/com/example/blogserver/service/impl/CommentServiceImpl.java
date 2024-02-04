@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -133,13 +134,21 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         int offset = pageSize * (currentPage - 1);
         Page<selectAllCommentsVo> commentVOPage = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         String queryString = queryPageBean.getQueryString();
-        commentVOPage.setRecords(commentDao.selectAllComments(offset, pageSize,queryString));
+        List<selectAllCommentsVo> selectAllCommentsVos = commentDao.selectAllComments(offset, pageSize, queryString);
+        selectAllCommentsVos.forEach(findPageVo -> {
+             if(findPageVo.getCreateTime()!=null){
+            findPageVo.setTimeStamp(findPageVo.getCreateTime().toInstant(ZoneOffset.UTC).toEpochMilli());}});
+        commentVOPage.setRecords(selectAllCommentsVos);
        commentVOPage.setTotal(blogMapper.selectCount(null));
         return commentVOPage;
     }
 
     @Override
     public List<adminCommentVo> selectCommentsById(Long bid) {
-      return   commentDao.selectCommentsById(bid);
+        List<adminCommentVo> adminCommentVos = commentDao.selectCommentsById(bid);
+        adminCommentVos.forEach(findPageVo -> {
+            if(findPageVo.getCreateTime()!=null){
+                findPageVo.setTimeStamp(findPageVo.getCreateTime().toInstant(ZoneOffset.UTC).toEpochMilli());}});
+        return   adminCommentVos;
     }
 }

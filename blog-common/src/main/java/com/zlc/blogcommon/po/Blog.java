@@ -98,4 +98,5 @@ public class Blog implements Serializable {
      */
     private String copyright;
 
+    private  String preserve;
 }

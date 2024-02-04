@@ -16,4 +16,6 @@ public class FindPageVo {
     private Integer published;
     private LocalDateTime updateTime;
     private String title;
+    private String preserve;
+    private Long TimeStamp;
 }

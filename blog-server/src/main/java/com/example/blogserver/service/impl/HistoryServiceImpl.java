@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneOffset;
 import java.util.List;
 
 /**
@@ -39,6 +40,9 @@ HistoryMapper historyMapper;
         Integer currentPage = queryPageBean.getCurrentPage();
         int offset = pageSize * (currentPage - 1);
         List<HistoryVo> records = historyMapper.Records(offset, pageSize, uid);
+        records.forEach(findPageVo -> {
+            if(findPageVo.getCreateTime()!=null){
+                findPageVo.setTimeStamp(findPageVo.getCreateTime().toInstant(ZoneOffset.UTC).toEpochMilli());}});
         Page<HistoryVo> page = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         page.setRecords(records);
         page.setTotal(count(new LambdaQueryWrapper<History>().eq(History::getUid,uid)));

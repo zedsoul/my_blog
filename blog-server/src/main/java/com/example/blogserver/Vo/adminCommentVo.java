@@ -16,4 +16,5 @@ public class adminCommentVo {
     private String nickname;
     private String content;
     private LocalDateTime createTime;
+    private Long timeStamp;
 }

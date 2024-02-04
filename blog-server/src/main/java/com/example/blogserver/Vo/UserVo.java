@@ -32,4 +32,6 @@ public class UserVo {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime lastLoginTime;
+
+    private  Long timeStamp;
 }

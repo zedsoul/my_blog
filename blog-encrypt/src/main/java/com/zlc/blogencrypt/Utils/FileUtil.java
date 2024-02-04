@@ -1,7 +1,8 @@
 package com.zlc.blogencrypt.Utils;
 
 
-import com.alibaba.cloud.commons.lang.StringUtils;
+
+import com.alibaba.nacos.common.utils.StringUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.web.multipart.MultipartFile;
 

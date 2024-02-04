@@ -15,4 +15,5 @@ public class selectAllCommentsVo {
     private String nickname;
     private int commentCounts;
     private LocalDateTime createTime;
+    private Long timeStamp;
 }

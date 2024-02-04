@@ -4,9 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.zlc</groupId>
-        <artifactId>blog</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <artifactId>blog</artifactId> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
     <artifactId>blog-extension</artifactId>
@@ -35,6 +34,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
     </build>
 

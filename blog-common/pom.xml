@@ -4,11 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.zlc</groupId>
-        <artifactId>blog</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <artifactId>blog</artifactId><!-- lookup parent from repository -->
     </parent>
-    <groupId>com.zlc</groupId>
     <artifactId>blog-common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>blog-common</name>
@@ -41,12 +39,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.10.2</version>
-            <scope>compile</scope>
-        </dependency>
+
 
         <!-- MP 核心库 -->
         <dependency>
@@ -69,6 +62,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
         </plugins>
     </build>
 

@@ -46,25 +46,25 @@ public interface BlogMapper extends BaseMapper<Blog> {
      * @param
      * @return List
      */
-    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+    @Select("SELECT b.preserve, b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
             "FROM blog b,type t " +
-            "WHERE b.type_id = t.type_id AND b.uid = #{uid} LIMIT #{start},#{pageSize} ")
+            "WHERE b.type_id = t.type_id AND b.uid = #{uid} order by create_time desc LIMIT #{start},#{pageSize} ")
     List<FindPageVo> getAllBlogs(Long uid, Integer start, Integer pageSize);
 
-    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+    @Select("SELECT b.preserve,b.title, b.blog_id, t.type_name, b.recommend, b.published, b.update_time " +
             "FROM blog b,type t " +
-            "WHERE b.type_id = t.type_id AND b.uid = #{uid}  and b.title=#{title} LIMIT #{start},#{pageSize} ")
+            "WHERE b.type_id = t.type_id AND b.uid = #{uid}  and b.title=#{title} order by create_time desc LIMIT #{start},#{pageSize} ")
     List<FindPageVo> getBlogByTitle(Long uid, Integer start, Integer pageSize,String title);
 
-    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title,b.preserve " +
             "FROM blog b,type t " +
-            "WHERE b.type_id = t.type_id AND b.uid = #{uid}  and b.type_id=#{typeId} LIMIT #{start},#{pageSize} ")
+            "WHERE b.type_id = t.type_id AND b.uid = #{uid}  and b.type_id=#{typeId} order by create_time desc LIMIT #{start},#{pageSize} ")
     List<FindPageVo> getBlogByType(Long uid, Integer start, Integer pageSize,Integer typeId);
 
 
-    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title " +
+    @Select("SELECT b.blog_id, t.type_name, b.recommend, b.published, b.update_time, b.title,b.preserve " +
             "FROM blog b,type t " +
-            "WHERE b.type_id = t.type_id AND b.uid = #{uid}  and b.type_id=#{typeId} and b.title=#{title} LIMIT #{start},#{pageSize} ")
+            "WHERE b.type_id = t.type_id AND b.uid = #{uid}  and b.type_id=#{typeId} and b.title=#{title} order by create_time desc LIMIT #{start},#{pageSize} ")
     List<FindPageVo> getBlogByTitleAndType(Long uid, Integer start, Integer pageSize,String title,Integer typeId);
 
 

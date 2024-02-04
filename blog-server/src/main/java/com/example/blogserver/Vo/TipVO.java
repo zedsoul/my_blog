@@ -16,4 +16,5 @@ public class TipVO {
     private String title;
     private String message;
     private LocalDateTime createTime;
+    private Long timeStamp;
 }

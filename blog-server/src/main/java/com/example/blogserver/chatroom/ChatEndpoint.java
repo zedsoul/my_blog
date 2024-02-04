@@ -147,8 +147,9 @@ public class ChatEndpoint {
                     GroupChatVO groupChatVO = new GroupChatVO();
                     BeanUtils.copyProperties(user, groupChatVO);
                     groupChatVO.setContent(mess.getMessage());
+                    String groupData = mess.getMessage();
                     groupChatVO.setType(mess.getMesType());
-                    String groupMess = MessageUtils.getMessage(mess.getMesType(), this.nickname, groupChatVO,2,mess.getAvatar(),  mess.getId(),mess.getSendId());
+                    String groupMess = MessageUtils.getMessage(mess.getMesType(), this.nickname, groupData,3,mess.getAvatar(),  mess.getId(),mess.getSendId());
                     //调用方法进行群聊消息推送
                     broadcastAllUsers(groupMess);
                     break;

@@ -17,4 +17,5 @@ public class HistoryVo {
     private String title;
     private String operation;
     private LocalDateTime createTime;
+    private Long timeStamp;
 }

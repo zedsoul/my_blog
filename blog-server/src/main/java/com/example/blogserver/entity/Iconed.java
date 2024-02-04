@@ -1,8 +1,7 @@
 package com.example.blogserver.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,13 +28,17 @@ public class Iconed implements Serializable {
 
     private String biliUrl;
 
+
     private String qqUrl;
+
 
     private String gitUrl;
 
+
     private String twitterUrl;
-    @TableId(value = "user_id", type = IdType.NONE)
-    private Long userId;
+
+    private Long id;
+
 
 
 }

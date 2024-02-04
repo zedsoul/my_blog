@@ -3,6 +3,7 @@ package com.example.blogserver.Controller.User;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.blogserver.Utils.JWTUtils;
+import com.example.blogserver.Utils.RedisUtil;
 import com.example.blogserver.Utils.WebUtil;
 import com.example.blogserver.Vo.RegistedVo;
 import com.example.blogserver.Vo.UserVo;
@@ -26,6 +27,11 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.time.ZoneOffset;
+
+import static com.zlc.blogcommon.constant.RedisConst.TOKEN_ALLOW_LIST;
+
 @Api(value = "用户模块", description = "用户模块的接口信息")
 @RefreshScope
 @RestController
@@ -38,6 +44,8 @@ public class UserController {
     TbUserRoleMapper userRoleMapper;
     @Autowired
     ITbUserRoleService roleService;
+    @Autowired
+    RedisUtil redisUtil;
     /**
      * 用户注册
      * @param register
@@ -133,6 +141,7 @@ public class UserController {
         Long rid = userRoleMapper.rid(Long.valueOf(uid));
         com.example.blogserver.entity.User user = userService.getById(uid);
         UserVo userVo = BeanUtil.copyProperties(user, UserVo.class);
+        userVo.setTimeStamp(userVo.getLastLoginTime().toInstant(ZoneOffset.UTC).toEpochMilli());
         userVo.setRid(rid);
         return R.data(200,userVo,"用户数据获取成功！");
 
@@ -166,5 +175,15 @@ public class UserController {
 
     public  R getNicknames(){
         return R.data(userService.selectAllNicknames(),"获取用户信息成功！");
+    }
+
+
+    @OptLog(optType = OptTypeConst.UPDATE)
+    @ApiOperation("删除token")
+    @GetMapping("/loginout")
+    public R updateUser() {
+        String email= TOKEN_ALLOW_LIST+JWTUtils.getTokenInfo(WebUtil.getHeader("jj-auth")).getClaim("email").asString();
+         redisUtil.del(email);
+        return R.data("退出成功！");
     }
 }

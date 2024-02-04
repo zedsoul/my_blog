@@ -56,8 +56,12 @@ public class BackController {
         com.example.blogserver.entity.User user = BeanUtil.copyProperties(userVo, User.class);
         user.setUid(Long.valueOf(id));
         Iconed icon = BeanUtil.copyProperties(userVo, Iconed.class);
-        icon.setUserId(Long.valueOf(id));
-        iconedService.saveOrUpdate(icon, new LambdaQueryWrapper<Iconed>().eq(Iconed::getUserId,Long.valueOf(id)));
+        icon.setId(Long.valueOf(id));
+        if(icon.getBiliUrl()==null&&icon.getQqUrl()==null&&icon.getGitUrl()==null&&icon.getTwitterUrl()==null){
+
+        }else{
+        iconedService.saveOrUpdate(icon);
+        }
         return R.data( userService.updateById(user),"用户修改成功成功");
     }
 }

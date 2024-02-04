@@ -36,4 +36,6 @@ public class displayBlogVo {
     private  Integer thumbsCounts;
     //收藏数
     private  Integer favoriteCounts;
+
+    private Long timeStamp;
 }

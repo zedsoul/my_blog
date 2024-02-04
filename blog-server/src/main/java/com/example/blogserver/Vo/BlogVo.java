@@ -90,6 +90,8 @@ public class BlogVo {
     //标签
     private List<String> tags;
 
+    private String preserve;
+
     //浏览数
     private  Integer views;
     //点赞数
@@ -102,5 +104,6 @@ public class BlogVo {
     private  Boolean isThumbs;
     //是否收藏
     private Boolean isFavorite;
+
 
 }

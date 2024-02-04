@@ -68,5 +68,8 @@ public class Comment implements Serializable {
      */
     private Long replyUid;
 
+    @TableField(exist = false)
+    private Long timeStamp;
+
 
 }

@@ -17,6 +17,7 @@
     <modules>
     <module>blog-common</module>
     <module>blog-encrypt</module>
+        <module>blog-server</module>
     <module>blog-extension</module>
     <module>blog-nacos</module>
     </modules>
@@ -30,7 +31,7 @@
             <mysql.version>8.0.19</mysql.version>
             <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
             <spring.cloud.version>Hoxton.SR12</spring.cloud.version>
-            <spring.cloud.alibaba.version>2021.1</spring.cloud.alibaba.version>
+            <spring.cloud.alibaba.version>2.2.7.RELEASE</spring.cloud.alibaba.version>
             <mybatis.spring.boot.version>1.3.0</mybatis.spring.boot.version>
 
         </properties>
@@ -44,7 +45,7 @@
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
-                <scope>import</scope>
+
             </dependency>
             <!--Spring cloud 2020.0.3-->
             <dependency>
@@ -52,7 +53,7 @@
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring.cloud.version}</version>
                 <type>pom</type>
-                <scope>import</scope>
+
             </dependency>
             <!--Spring cloud alibaba 2.1.0.RELEASE-->
             <dependency>
@@ -102,7 +103,7 @@
             <artifactId>spring-boot-dependencies</artifactId>
             <version>2.3.12.RELEASE</version>
             <type>pom</type>
-            <scope>import</scope>
+
         </dependency>
 
         <dependency>
@@ -110,38 +111,38 @@
             <artifactId>spring-cloud-dependencies</artifactId>
             <version>Hoxton.SR12</version>
             <type>pom</type>
-
+            <scope>import</scope>
         </dependency>
+
 
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-            <version>2.1.2.RELEASE</version>
+            <version>2.2.7.RELEASE</version>
             <type>pom</type>
-
+            <scope>import</scope>
         </dependency>
 
 <!--nacos-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>2.2.7.RELEASE</version>
         </dependency>
         <!--Nacos注册中心-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>2.2.7.RELEASE</version>
         </dependency>
 
 <!--getway-->
-
-
-
-
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-            <version>3.1.3</version>
+            <version>2.2.6.RELEASE</version>
         </dependency>
+
 <!--添加hutool类工具-->
         <dependency>
             <groupId>cn.hutool</groupId>

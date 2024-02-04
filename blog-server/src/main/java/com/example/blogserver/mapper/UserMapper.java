@@ -30,6 +30,6 @@ public interface UserMapper extends BaseMapper<User> {
     List<UserVo> RecordsBynickname(Integer offset , Integer pageSize ,String nickname);
 
 
-    @Select("SELECT * FROM user where email=#{email} and username=#{username}")
-    com.example.blogserver.entity.User getUser(String email, String username);
+    @Select("SELECT * FROM user where email=#{email} ")
+    com.example.blogserver.entity.User getUser(String email);
 }

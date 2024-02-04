@@ -27,4 +27,6 @@ public class examBlogVo {
     private  String first_picture;
 
     private  String  description;
+
+    private  Long timeStamp;
 }

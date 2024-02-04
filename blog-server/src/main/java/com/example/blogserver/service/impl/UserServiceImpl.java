@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 
@@ -202,8 +203,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, com.example.blogser
     @Override
     public void resetPassword(RegistedVo resetPassword) {
         String email = resetPassword.getEmail();
-        String username = resetPassword.getUsername();
-        com.example.blogserver.entity.User userDB = userMapper.getUser(email, username);
+
+        com.example.blogserver.entity.User userDB = userMapper.getUser(email);
+        System.out.println(userDB);
         if(userDB==null){
             throw   new BizException("该用户不存在，请重新确认");
         }
@@ -246,9 +248,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, com.example.blogser
         List<UserVo> records=null;
         if(queryPageBean.getQueryString()!=null){
            records = userMapper.RecordsBynickname(offset, pageSize,queryPageBean.getQueryString());
+            records.forEach(findPageVo -> {
+                if(findPageVo.getLastLoginTime()!=null){
+                findPageVo.setTimeStamp(findPageVo.getLastLoginTime().toInstant(ZoneOffset.UTC).toEpochMilli());}});
         }
         else{
          records = userMapper.Records(offset, pageSize);
+
+            records.forEach(findPageVo -> {
+                        if(findPageVo.getLastLoginTime()!=null){
+                findPageVo.setTimeStamp(findPageVo.getLastLoginTime().toInstant(ZoneOffset.UTC).toEpochMilli());}});
         }
         Page<UserVo> page = new Page<>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         page.setRecords(records);

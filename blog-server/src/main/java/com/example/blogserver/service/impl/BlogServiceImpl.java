@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -504,7 +505,8 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
               .map(blog -> {
             displayBlogVo blogVo = BeanUtil.copyProperties(blog, displayBlogVo.class);
             // 设置其他属性
-            blogVo.setTags(tagMapper.getBlogTagList(blog.getBlogId()).stream().map(Tag::getTagName).collect(Collectors.toList()));
+                  blogVo.setTimeStamp( blogVo.getCreateTime().toInstant(ZoneOffset.UTC).toEpochMilli());
+                  blogVo.setTags(tagMapper.getBlogTagList(blog.getBlogId()).stream().map(Tag::getTagName).collect(Collectors.toList()));
             Type type = typeMapper.selectById(blog.getTypeId());
             if (type != null) {
                 blogVo.setTypeName(type.getTypeName());
@@ -540,14 +542,30 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
 
         //执行全部查询
         if (title ==null && typeId == null) {
-            page.setRecords(blogMapper.adminGetAllBlogs( start, pageSize));
+            List<FindPageVo> findPageVos = blogMapper.adminGetAllBlogs(start, pageSize);
+            findPageVos.forEach(findPageVo -> {
+                if(findPageVo.getUpdateTime()!=null){
+                findPageVo.setTimeStamp(findPageVo.getUpdateTime().toInstant(ZoneOffset.UTC).toEpochMilli());}});
+            page.setRecords(findPageVos);
         } else {
             if (title != null && typeId != null) {
-                page.setRecords(blogMapper.adminGetBlogByTitleAndType( start, pageSize, title, typeId));
+                List<FindPageVo> findPageVos = blogMapper.adminGetBlogByTitleAndType(start, pageSize, title, typeId);
+                findPageVos.forEach(findPageVo -> {
+                    if(findPageVo.getUpdateTime()!=null){
+                    findPageVo.setTimeStamp(findPageVo.getUpdateTime().toInstant(ZoneOffset.UTC).toEpochMilli());}});
+                page.setRecords(findPageVos);
             } else if (title != null) {
-                page.setRecords(blogMapper.adminGetBlogByTitle( start, pageSize, title));
+                List<FindPageVo> findPageVos = blogMapper.adminGetBlogByTitle(start, pageSize, title);
+                findPageVos.forEach(findPageVo -> {
+                    if(findPageVo.getUpdateTime()!=null){
+                    findPageVo.setTimeStamp(findPageVo.getUpdateTime().toInstant(ZoneOffset.UTC).toEpochMilli());}});
+                page.setRecords(findPageVos);
             } else {
-                page.setRecords(blogMapper.adminGetBlogByType( start, pageSize, typeId));
+                List<FindPageVo> findPageVos = blogMapper.adminGetBlogByType(start, pageSize, typeId);
+                findPageVos.forEach(findPageVo -> {
+                    if(findPageVo.getUpdateTime()!=null){
+                    findPageVo.setTimeStamp(findPageVo.getUpdateTime().toInstant(ZoneOffset.UTC).toEpochMilli());}});
+                page.setRecords(findPageVos);
             }
         }
 
@@ -566,6 +584,7 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
         Page<examBlogVo> page = new Page<examBlogVo>(queryPageBean.getCurrentPage(), queryPageBean.getPageSize());
         LambdaQueryWrapper<Blog> wrapper = new LambdaQueryWrapper<Blog>().eq(Blog::getPublished, 0);
         List<examBlogVo> examBlogVos = blogMapper.examBlogPages(start, pageSize);
+        examBlogVos.forEach(examBlogVo -> {examBlogVo.setTimeStamp(examBlogVo.getCreateTime().toInstant(ZoneOffset.UTC).toEpochMilli());});
         page.setRecords(examBlogVos);
         page.setTotal(blogMapper.selectCount(wrapper));
         return page;
@@ -574,7 +593,8 @@ public class BlogServiceImpl extends ServiceImpl<BlogMapper, Blog> implements IB
     @Override
     public Boolean examBlogs(Long bid,int operationId) {
         LambdaUpdateWrapper<Blog> updateWrapper = Wrappers.lambdaUpdate();
-        boolean update = update(updateWrapper.eq(Blog::getBlogId, bid).set(Blog::getPublished, operationId));
+        LocalDateTime now = LocalDateTime.now();
+        boolean update = update(updateWrapper.eq(Blog::getBlogId, bid).set(Blog::getPublished, operationId).set(Blog::getUpdateTime,now));
         return update;
     }
 }
